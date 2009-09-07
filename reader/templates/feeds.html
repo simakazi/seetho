@@ -1,0 +1,39 @@
+<html>
+<head>
+<script type="text/javascript" src="js/jquery.js"></script>   
+</head>
+<body>
+<div>
+{% if user.is_authenticated %}
+<b>{{user.username}}</b> ({{user.get_full_name}})
+<a href="/logout/">Logout</a>
+{% else %}
+<a href="/openid/login">Login</a>
+{% endif %}
+</div>
+<div class="main">
+{% if user.is_authenticated %}
+<h3>Add feed</h3>
+<form action="/add_feed/" method="POST">
+{{ feedform.as_p }}
+<input type="submit" value="Add!" />
+</form>
+{% endif %}
+{% if feeds %}
+<h1>Your feeds:</h1>
+{% for feed in feeds %}
+<h2><b style="cursor:hand" onclick='javascipt:$("#feeddiv{{feed.id}}").toggle(600);'>+</b><a href="{{feed.url}}">{{feed.url}}</a></h2>
+<div id="feeddiv{{feed.id}}" class="feed">
+    {% for entry in feed.entry_set.all %}
+	
+	<h3><b style="cursor:hand" onclick='javascipt:$("#entrydiv{{entry.id}}").toggle(600);$(this).html("-")'>+</b><a href="{{entry.url}}">{{entry.title}}</a></h3>
+	<div id="entrydiv{{entry.id}}" class="entry">
+	    <p>{% autoescape off %}{{entry.summary}}{% endautoescape %}</p>
+	</div>
+    {%  endfor %}
+</div>
+{% endfor %}
+{% endif %}
+</div>
+</body>
+</html>
