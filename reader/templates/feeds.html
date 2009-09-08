@@ -22,7 +22,8 @@
 {% if feeds %}
 <h1>Your feeds:</h1>
 {% for feed in feeds %}
-<h2><b style="cursor:hand" onclick='javascipt:$("#feeddiv{{feed.id}}").toggle(600);'>+</b><a href="{{feed.url}}">{{feed.url}}</a></h2>
+<h2><b style="cursor:hand" onclick='javascipt:$("#feeddiv{{feed.id}}").toggle(600);'>+</b><a href="{{feed.link}}">{{feed.title}}</a></h2>
+<h3>{{feed.subtitle}}</h3>
 <div id="feeddiv{{feed.id}}" class="feed">
     {% for entry in feed.entry_set.all %}
 	
