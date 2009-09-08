@@ -4,6 +4,8 @@
   "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
+<link type="text/css" href="css/main.css" rel="stylesheet" />
+<script type="text/javascript" src="js/jquery.js"></script> 
 <title>Sign in with your OpenID</title>
 <script>
 function openid_google(){
@@ -42,15 +44,27 @@ input.openid {
         <div class="form-row">
             <label for="id_openid_identifier">{% trans "OpenID:" %}</label><br />
             {{ form.openid_identifier }}
+	    <a href="http://www.openid.net">(?)</a>
         </div>
         <div class="submit-row "><input name="bsignin" id="submitbutton" type="submit" value="{% trans "Sign in" %}"></div>
-<img src="/img/google.png" onclick='javascipt:openid_google()'/>
-<img src="/img/yahoo.png" onclick='javascipt:openid_yahoo()'/>
+<div class="openidbutton"><img src="/img/google.png" onclick='javascipt:openid_google()'/></div>
+<div class="openidbutton"><img src="/img/yahoo.png" onclick='javascipt:openid_yahoo()'/></div>
  {% if next %}
 	<input type="hidden" name="next" value="{{ next }}" />
  {% endif %}
 
 	</fieldset>
 </form>	
+<script>
+$(".openidbutton").hover(
+      function () {
+        $(this).css("background-color","#c3a549");
+      }, 
+      function () {
+        $(this).css("background-color","#ead8ec");
+      }
+    );
+
+</script>
 </body>
 </html>
