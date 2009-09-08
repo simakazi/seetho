@@ -38,30 +38,34 @@ class Entry(models.Model):
     class Meta:
 	db_table="entries"
 
+class Pull(models.Model):
+    title=models.CharField(max_length=100)
+    tags=models.ManyToManyField(Tag)
+    
+    class Meta:
+	db_table="pulls"
+
+class PullEntry(models.Model):
+    pull=models.ForeignKey(Pull)
+    entry=models.ForeignKey(Entry)
+
 class FeedFilterPair(models.Model):
     title=models.CharField(max_length=100)
     feed=models.ForeignKey(Feed)
     user=models.ForeignKey(auth.User)
     last_cheked=models.DateTimeField()
-    
+    pull=models.ForeignKey(Pull)    
+
     class Meta:
 	db_table="pairs"
 
 class Filter(models.Model):
     type=models.IntegerField(choices=((1,"must"),(2,"may"),(3,"not")))
-    value=models.IntegerField(max_length=50)
+    value=models.CharField(max_length=50)
     pair=models.ForeignKey(FeedFilterPair)
     
     class Meta:
 	db_table="filters"
-
-class Pull(models.Model):
-    title=models.CharField(max_length=100)
-    pair=models.ForeignKey(FeedFilterPair)
-    tags=models.ManyToManyField(Tag)
-    
-    class Meta:
-	db_table="pulls"
 
 class Group(models.Model):
     title=models.CharField(max_length=100)
@@ -72,6 +76,10 @@ class Group(models.Model):
     class Meta:
 	ordering=["title"]
 	db_table="groups"
+
+class UserPull(models.Model):
+    pull=models.ForeignKey(Pull)
+    user=models.ForeignKey(auth.User)
 
 class News(models.Model):
     title=models.CharField(max_length=100)

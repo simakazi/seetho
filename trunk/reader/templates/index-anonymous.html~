@@ -1,0 +1,24 @@
+<html>
+<head>
+<script type="text/javascript" src="js/jquery.js"></script>   
+</head>
+<body>
+<div class="header">
+Seetho. News filtering, systematization and group aggregation.
+</div>
+<div class="login">
+<a href="/openid/login">Sign in with your OpenID</a> <a href="http://www.openid.net">(?)</a>
+</div>
+<div class="news">
+    {% for n in news %}
+	<div class="entry">
+	    <h1>{{n.title}}</h1>
+	    <div class="timestamp">{{n.published}}</div>
+	    {% autoescape off%}
+	    {{n.text}}
+	    {% endautoescape %}
+	</div>
+    {% endfor %}
+</div>
+</body>
+</html>

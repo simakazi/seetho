@@ -58,7 +58,7 @@ $.post("/suggest_feed/",
 Please, enter wanted site's url, and press "Check"-button. Program will automaticaly find rss/atom source.<br />
 <input id="feed_url" value="http://" onkeydown='$(this).css("color","black");' onkeyup='javascript:suggest_feed();'/>
 <button onclick='javascript:findFeed();'>Check</button><br />
-<div id="suggest_feed_div" style="position: absolute; left: 0px; top: 60px;"></div>
+<div id="suggest_feed_div" style="position: absolute; left: 0px; top: 80px;"></div>
 <button onclick="$('#accordion').accordion('activate',1);">Next</button>
 </div>
 <h3><a href="#">Step №2. Construct filter</a></h3>

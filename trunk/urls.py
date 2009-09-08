@@ -8,6 +8,8 @@ PROJECT_ROOT = os.path.dirname(__file__)
 
 urlpatterns = patterns('',
  (r'^$','reader.views.index'),
+ (r'^find_feed/$','reader.views.find_feed'),
+ (r'^suggest_feed/$','reader.views.suggest_feed'),
  (r'^add_feed/$','reader.views.add_feed'),
  (r'^openid/', include('django_openid_auth.urls')),
  (r'^logout/$', 'reader.views.logout'),

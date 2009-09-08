@@ -1,0 +1,103 @@
+<html>
+<head>
+
+<script type="text/javascript" src="js/jquery.js"></script>  
+<script type="text/javascript" src="js/jquery-ui.js"></script>  
+
+<script>
+function findFeed(){
+q=$("#id_feed_url").attr('value');
+$("#id_feed_url").attr("value","please wait...");
+$.ajax({
+      url: "/find_feed/",
+      global: false,
+      type: "POST",
+      data: ({url : q}),
+      success: function(msg){
+	if (msg!="None"){
+	 $("#id_feed_url").css("color","black");
+         $("#id_feed_url").attr("value",msg);
+	 $("#id_feed_cheked").attr("value","True");
+	}
+	else{
+	 $("#id_feed_url").css("color","red");
+         $("#id_feed_url").attr("value","No feeds found!");
+	 $("#id_feed_cheked").attr("value","False");
+	}
+      }
+   }
+)
+}
+
+function suggest_feed(){
+q=$("#id_feed_url").attr('value');
+$.post("/suggest_feed/",
+    {control_id : "id_feed_url",div_id:"suggest_feed_div",first_chars:q},
+    function(data){
+	$("#suggest_feed_div").html(data);
+	$("#suggest_feed_div").show("fast");
+    }
+);
+}
+</script>
+
+<link type="text/css" href="css/main.css" rel="stylesheet" />
+</head>
+<body>
+<div>
+{% if user.is_authenticated %}
+<b>{{user.username}}</b> ({{user.get_full_name}})
+<a href="/logout/">Logout</a>
+{% else %}
+<a href="/openid/login">Login</a>
+{% endif %}
+</div>
+
+<h2>Add new news source.</h2>
+<form action="/add_feed/" method="POST">
+<div id="accordion" class="accordion">
+<h3><a href="#">Step №1. Select feed</a></h3>
+<div style="position: relative;">
+Please, enter wanted site's url, and press "Check"-button. Program will automaticaly find rss/atom source.<br />
+<input id="id_feed_url" name="feed_url" value="http://" onkeydown='$(this).css("color","black");' onchange='$("#id_feed_cheked").attr("value","False");' onkeyup='javascript:suggest_feed();'/>
+<input type="hidden" value="False" name="feed_cheked" id="id_feed_cheked" />
+<input type="button" onclick='javascript:findFeed();' value="Check" /><br />
+<div id="suggest_feed_div" style="position: absolute; left: 0px; top: 60px;"></div>
+<input type="button" onclick="$('#accordion').accordion('activate',1);" value="Next" />
+</div>
+<h3><a href="#">Step №2. Construct filter</a></h3>
+<div>
+You can construct filter here. Input words, separated by commas.<br />
+News contain <u>all</u> words:<input id="id_filter_must" name="filter_must"/><br />
+News contain <u>some</u> words:<input id="id_filter_may" name="filter_may"/><br />
+News <u>don't</u> contain <u>any</u> word:<input id="id_filter_not" name="filter_not"/><br />
+<input type="button" onclick="$('#accordion').accordion('activate',2);" value="Next" /><input type="button" onclick="$('#accordion').accordion('activate',0);" value="Back" />
+</div>
+<h3><a href="#">Step №3. Select pull for collected news</a></h3>
+<div>
+Select or create new pull:<br />
+<input id="id_pull_title" name="pull_title" value="Add new pull"/>
+<input type="hidden" id="id_pull_id" name="pull_id" value="-1"/>
+<br />
+<select style="width: 90%" id="pull_exist" onchange="$('#id_pull_title').attr('value',$('#pull_exist :selected').text());$('#id_pull_id').attr('value',$(this).val());">
+<option value="-1" selected="true">Add new pull</option>
+{% for p in pulls %}
+<option value="{{ p.id }}">{{ p.title }}</option>
+{% endfor %}
+</select><br />
+<input type="submit">Done</input><input type="button" onclick="$('#accordion').accordion('activate',1);" value="Back" />
+</div>
+</div>
+</form>
+<script type="text/javascript">
+  $("#accordion").accordion();
+</script>
+
+{% for e in entries%}
+<h1>{{ e.title }}</h1>
+{% autoescape off %}
+{{e.text}}
+{% endautoescape %}
+{% endfor %}
+</body>
+</html>
