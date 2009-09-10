@@ -66,7 +66,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
 )
 
-ROOT_URLCONF = 'diplom0.urls'
+ROOT_URLCONF = 'urls'
 
 TEMPLATE_DIRS = (
 os.path.join(PROJECT_ROOT, 'templates'),
@@ -82,7 +82,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.admin',
-    'diplom0.reader',
+    'reader',
     'django_openid_auth'
 )
 
@@ -100,5 +100,5 @@ DEFAULT_FROM_EMAIL='diplom0@mail.ru'
 OPENID_CREATE_USERS = True
 OPENID_UPDATE_DETAILS_FROM_SREG = True
 
-        LOGIN_URL = '/openid/login/'
-        LOGIN_REDIRECT_URL = '/'
+LOGIN_URL = '/openid/login/'
+LOGIN_REDIRECT_URL = '/'
