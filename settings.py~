@@ -90,12 +90,13 @@ AUTHENTICATION_BACKENDS = (
             'django_openid_auth.auth.OpenIDBackend',
             'django.contrib.auth.backends.ModelBackend',
         )
-
-
-EMAIL_HOST='smtp.mail.ru'
-EMAIL_HOST_PASSWORD='somepassword'
-EMAIL_HOST_USER='diplom0'
-DEFAULT_FROM_EMAIL='diplom0@mail.ru'
+DATE_FORMAT="n.m.y"
+TIME_FORMAT="H:i:s"
+DATETIME_FORMAT="N j, Y, P"
+EMAIL_HOST=''
+EMAIL_HOST_PASSWORD=''
+EMAIL_HOST_USER=''
+DEFAULT_FROM_EMAIL=''
 
 OPENID_CREATE_USERS = True
 OPENID_UPDATE_DETAILS_FROM_SREG = True

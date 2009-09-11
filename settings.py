@@ -90,8 +90,9 @@ AUTHENTICATION_BACKENDS = (
             'django_openid_auth.auth.OpenIDBackend',
             'django.contrib.auth.backends.ModelBackend',
         )
-
-
+DATE_FORMAT="d.m.y"
+TIME_FORMAT="H:i:s"
+DATETIME_FORMAT="N j, Y, P"
 EMAIL_HOST=''
 EMAIL_HOST_PASSWORD=''
 EMAIL_HOST_USER=''

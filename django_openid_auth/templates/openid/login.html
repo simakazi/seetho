@@ -27,7 +27,18 @@ input.openid {
 </style>
 </head>
 <body>
-<h1>Sign in with your OpenID</h1>
+<div id="container">
+<div id="header">
+Seetho. News filtering, systematization and group aggregation.
+</div>
+
+<div class="mainmenu">
+<div class="button" onclick="javascript:document.location='/'">News</div>
+<div class="button_disabled">Sign in</div>
+</div>
+
+<div id="main">
+
 {% if form.errors %}
 <p class="errors">{% trans "Please correct errors below:" %}<br />
 	{% if form.openid_identifier.errors %} 
@@ -39,32 +50,27 @@ input.openid {
 </p>
 {% endif %}
 <form name="fopenid" action="{{ action }}" method="post">
-	<fieldset>
-		<legend>{% trans "Sign In Using Your OpenID" %}</legend>
+<h3>Sign in to Seetho using OpenID</h3>
+	<div style="width:400px;">
         <div class="form-row">
-            <label for="id_openid_identifier">{% trans "OpenID:" %}</label><br />
+            <label for="id_openid_identifier">OpenID:</label>
             {{ form.openid_identifier }}
-	    <a href="http://www.openid.net">(?)</a>
-        </div>
-        <div class="submit-row "><input name="bsignin" id="submitbutton" type="submit" value="{% trans "Sign in" %}"></div>
-<div class="openidbutton"><img src="/img/google.png" onclick='javascipt:openid_google()'/></div>
-<div class="openidbutton"><img src="/img/yahoo.png" onclick='javascipt:openid_yahoo()'/></div>
- {% if next %}
+	    <input name="bsignin" id="submitbutton" type="submit" value="Sign in">
+	</div>
+	<div class="undercomment">
+	example: http://your.name.myopenid.com
+	</div>
+	</div>
+<br />
+<h3>Or use some OpenID providers:</h3>
+	<div class="button" onclick="javascript:openid_google()"><img src="/img/google.png" /></div>
+	<div class="button" onclick="javascript:openid_yahoo()"><img src="/img/yahoo.png" /></div>
+	{% if next %}
 	<input type="hidden" name="next" value="{{ next }}" />
- {% endif %}
-
-	</fieldset>
+	{% endif %}
 </form>	
-<script>
-$(".openidbutton").hover(
-      function () {
-        $(this).css("background-color","#c3a549");
-      }, 
-      function () {
-        $(this).css("background-color","#ead8ec");
-      }
-    );
-
-</script>
+</div>
+<div id="footer">Seetho (c) semenoff.andrew 2009.</div>
+</div>
 </body>
 </html>

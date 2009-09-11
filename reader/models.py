@@ -29,13 +29,14 @@ class Entry(models.Model):
     title=models.CharField(max_length=300)
     summary=models.TextField()
     url=models.URLField(max_length=300)
-    downloaded=models.DateTimeField(auto_now_add=True)
+    downloaded=models.DateTimeField()
 
     feed=models.ForeignKey(Feed)
     def __unicode__(self):
 	print title+native_id
     
     class Meta:
+	ordering=["-downloaded"]
 	db_table="entries"
 
 class Pull(models.Model):

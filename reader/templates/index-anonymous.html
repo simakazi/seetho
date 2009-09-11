@@ -8,10 +8,14 @@
 <div class="header">
 Seetho. News filtering, systematization and group aggregation.
 </div>
+<div class="main">
 <div class="login">
-<a href="/openid/login">Sign in with your OpenID</a> <a href="http://www.openid.net">(?)</a>
+<a href="/openid/login"><div class="openidbutton">Sign in</div></a>
 </div>
+
+{% if news %}
 <div class="news">
+<h2>Last news on Seetho:</h2>
     {% for n in news %}
 	<div class="entry">
 	    <h1>{{n.title}}</h1>
@@ -22,5 +26,8 @@ Seetho. News filtering, systematization and group aggregation.
 	</div>
     {% endfor %}
 </div>
+{% endif %}
+</div>
+<div class="footer">Seetho (c) semenoff.andrew 2009.</div>
 </body>
 </html>
