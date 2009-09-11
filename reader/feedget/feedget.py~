@@ -7,11 +7,11 @@ import time
 import model
 
 
-def checkfeed(feedurl):
-    feed=model.Feed(feedurl,-1)
+def checkfeed(url):
     q=model.add_or_get_feed(feed)
-    if q.last_cheked<time.time()-5 or q.last_cheked==-1:
-	E=feedparser.parse(feedurl,modified=time.localtime(q.last_cheked)).entries
+    if q.lastcheked<time.time()-5 or q.lastcheked==-1:
+	print q.lastcheked,time.localtime(q.lastcheked)
+	E=feedparser.parse(feedurl,modified=time.localtime(q.lastcheked)).entries
 	q=model.update_feed_time(q)
 	print len(E),"new entries in feed",feedurl,"..."
 	count=0
