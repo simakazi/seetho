@@ -38,7 +38,7 @@ def add_feed(request):
 	    else:
 		pull=Pull(title=pull_title)
 		pull.save()
-	    
+	    print pull,pull.id,pull.title
 	    pair=FeedFilterPair(pull=pull,feed=feed,user=request.user,last_cheked="2009-01-01 00:00",title="")
 	    pair.save()
 	    
@@ -51,13 +51,15 @@ def add_feed(request):
 		up=UserPull(user=request.user,pull=pull)
 		up.save()
 
-            return HttpResponseRedirect('/')
+            return HttpResponseRedirect('/pulls')
+	else:
+	    print "А вот и пиздец!"
     else:
         form = FeedForm()
-
-    return render_to_response('newfeed.html', {
-        'feedform': form,'feeds':[]
-    })
+    P=Pull.objects.filter(Q(userpull__user=request.user)|Q(group__users=request.user))
+    e=Entry.objects.filter(pullentry__pull__userpull__user=request.user)
+    return render_to_response('pulls.html', {
+	'feedform':form,'pulls':P,'entries':e,'user':request.user})
 
 def find_feed(request):
     if request.method=='POST':
@@ -81,17 +83,36 @@ def suggest_feed(request):
 	return "Error"
 
 def index(request):
-    if (request.user.is_authenticated()):
+    """if (request.user.is_authenticated()):
 	return list_feeds(request)
-    else:
-	return render_to_response('index-anonymous.html',{
-	    'news':News.objects.all()[:15]
+    else:"""
+    return render_to_response('index.html',{
+	    'news':News.objects.all()[:15],
+	    'user':request.user
 	})
 
-def list_feeds(request):
+
+def clean_pull(request):
+    if request.method=='POST':
+	id=request.POST['id']
+	PullEntry.objects.filter(pull__id=id).delete()
+	return HttpResponse("Ok")
+    else:
+	return HttpResponse("Error")
+
+def purge_pull(request):
+    if request.method=='POST':
+	id=request.POST['id']
+	Pull.objects.filter(id=id).delete()
+	return HttpResponse("Ok")
+    else:
+	return HttpResponse("Error")
+
+def list_pulls(request):
     for feed in Feed.objects.all():
 	check_feed(feed)
     P=Pull.objects.filter(Q(userpull__user=request.user)|Q(group__users=request.user))
+    E=[]
     for p in P:
 	for q in FeedFilterPair.objects.filter(pull=p):
 	    for e in Entry.objects.filter(feed=q.feed).exclude(pullentry__pull=p):
@@ -112,10 +133,11 @@ def list_feeds(request):
 		if (flag3 and flag1 and (flag2 or (flag2==flag2on))):
 		    ep=PullEntry(pull=p,entry=e)
 		    ep.save()
+	E.append([p,Entry.objects.filter(pullentry__pull=p,pullentry__pull__userpull__user=request.user)])
     e=Entry.objects.filter(pullentry__pull__userpull__user=request.user)
     print P
-    return render_to_response('newfeed.html', {
-	'feedform':FeedForm(),'pulls':P,'entries':e,'user':request.user
+    return render_to_response('pulls.html', {
+	'feedform':FeedForm(),'pulls':P,'entries':E,'user':request.user
     })
 
 
@@ -143,11 +165,12 @@ def check_feed(q):
 		q.link=q.url
 	    q.save()
 	E=R.entries
-	q.last_cheked=datetime.now().isoformat()
+	q.last_cheked=datetime.now()
+	q.save()
 	count=0
 	for e in E:
 	    if not (q.entry_set.filter(native_id=e.id)):
-		en=Entry(native_id=e.id,title=e.title,summary=e.description,url=e.link,feed=q)
+		en=Entry(native_id=e.id,title=e.title,summary=e.description,url=e.link,feed=q,downloaded=datetime.utcfromtimestamp(time.mktime(e.updated_parsed)))
 		en.save()
 		print en.url
 		print en.title

@@ -36,6 +36,7 @@ class Entry(models.Model):
 	print title+native_id
     
     class Meta:
+	ordering=["-downloaded"]
 	db_table="entries"
 
 class Pull(models.Model):
@@ -45,6 +46,9 @@ class Pull(models.Model):
     class Meta:
 	db_table="pulls"
 
+class PullEntry(models.Model):
+    pull=models.ForeignKey(Pull)
+    entry=models.ForeignKey(Entry)
 
 class FeedFilterPair(models.Model):
     title=models.CharField(max_length=100)
