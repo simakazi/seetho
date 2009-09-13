@@ -39,7 +39,7 @@ height:25px;
 
 #main {
 width:100%;
-background-color:#5cbf45;
+background-color:#ffffff;
 margin-left:0px;
 padding-bottom:20px;
 padding-top:0px;
@@ -68,11 +68,8 @@ div.pullheader{
 border-spacing:5px;
 border:solid 1px #5cbf45;
 background-color:#5cbf45;
-width:80%;
+width:100%;
 cursor:default;
-padding-top:3px;
-padding-left:40px;
-margin-left:10px;
 }
 
 div.pullheadertext{
@@ -106,10 +103,12 @@ background-color:#ffffff;
 
 div.pullbody{
 margin-left:10px;
-border:solid 3px #5cbf45;
-padding:10px;
+margin-right:0px;
+border:solid 5px #5cbf45;
+padding-right:10px;
 width:90%;
-background-color:#ffffff;
+background-color:#5cbf45;
+margin-bottom:20px;
 }
 
 .pullbody hr {
@@ -121,8 +120,9 @@ color:#333016;
 font-size:9pt;
 background-color:#ffffff;
 background-repeat:no-repeat;
-margin-bottom:10px;
+margin-bottom:5px;
 width:100%;
+border: solid 5px #ffffff;
 }
 
 div.accordion {
@@ -223,7 +223,6 @@ font-size:8pt;
 
 div.undercomment {
 color:#a09b75;
-text-align:center;
 padding-right:10px;
 font-size:8pt;
 }

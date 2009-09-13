@@ -163,6 +163,7 @@ Select or create new pull:<br />
 <div class="leftmenu">
 </div>
 {% for p,ent in entries %}
+<div class="pullbody" id="pullbody{{p.id}}">
 <div class="pullheader">
 <div class="pullheadertext">{{p.title}}. Last entry: {{ent.0.downloaded}}.</div>
 <div class="smallbutton" id="togglepull{{p.id}}" onclick="javascript:togglepull({{p.id}});">hide</div>
@@ -170,19 +171,18 @@ Select or create new pull:<br />
 <div class="smallbutton" onclick="javascript:cleanpull({{p.id}});">clean</div>
 <div class="smallbutton" onclick="javascript:purgepull({{p.id}});">purge</div>
 </div>
-<div class="pullbody" id="pullbody{{p.id}}">
 
 {% for e in ent %}
 
 <div class="entry">
 <div style="display:table-cell;width:100%;"><h3>{{ e.title }}</h3></div>
 <div class="timestamp" style="display:table-cell;white-space: nowrap;">{{e.downloaded|date}} {{e.downloaded|time}}</div>
+<div class="undercomment"><a href="{{e.url}}">{{e.url}}</a></div>
 {% autoescape off %}
 {{e.summary}}
 {% endautoescape %}
 </div>
 
-<hr />
 {% endfor %}
 </div>
 
