@@ -27,13 +27,17 @@ input.openid {
 </style>
 </head>
 <body>
-<div class="header">
+<div id="container">
+<div id="header">
 Seetho. News filtering, systematization and group aggregation.
 </div>
-<div class="main">
 
+<div class="mainmenu">
 <div class="button" onclick="javascript:document.location='/'">News</div>
 <div class="button_disabled">Sign in</div>
+</div>
+
+<div id="main">
 
 {% if form.errors %}
 <p class="errors">{% trans "Please correct errors below:" %}<br />
@@ -66,6 +70,7 @@ Seetho. News filtering, systematization and group aggregation.
 	{% endif %}
 </form>	
 </div>
-<div class="footer">Seetho (c) semenoff.andrew 2009.</div>
+<div id="footer">Seetho (c) semenoff.andrew 2009.</div>
+</div>
 </body>
 </html>
