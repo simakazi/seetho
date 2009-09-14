@@ -5,6 +5,43 @@
 <script type="text/javascript" src="/js/jquery-ui.js"></script>  
 
 <script>
+function openpull(id){
+$('.leftpart').html("");
+$.ajax({
+      url: "/pull/"+id,
+      global: false,
+      type: "POST",
+      data: ({}),
+      success: function(msg){
+	if (msg!="None"){
+	    $('.leftpart').html(msg);
+	}
+	else{
+	}
+      }
+   }
+)
+}
+
+function updatepull(id){
+$('#pullbody'+id).html("Please wait...");
+$.ajax({
+      url: "/pull/"+id,
+      global: false,
+      type: "POST",
+      data: ({}),
+      success: function(msg){
+	if (msg!="None"){
+	    $('#pullbody'+id).replaceWith(msg);
+	}
+	else{
+	}
+      }
+   }
+)
+}
+
+
 function findFeed(){
 q=$("#id_feed_url").attr('value');
 $("#id_feed_url").attr("value","please wait...");
@@ -41,7 +78,7 @@ $.post("/suggest_feed/",
 }
 
 function togglepull(a){
-$('#pullbody'+a).toggle();
+$('#pullbody'+a+' > .entry').toggle();
 if ($('#togglepull'+a).text()=='show')
 $('#togglepull'+a).text('hide');
 else
@@ -60,7 +97,8 @@ $.ajax({
 	 alert("Something gone wrong");
 	}
 	else{
-	 $("#pullbody"+a).text("");
+	$('#pullbody'+a+' > .entry').remove();
+	 //$("#pullbody"+a).text("");
 	}
       }
    }
@@ -160,37 +198,47 @@ Select or create new pull:<br />
   $("#accordion").hide();
 </script>
 
-<div class="leftmenu">
-</div>
-{% for p,ent in entries %}
-<div class="pullbody" id="pullbody{{p.id}}">
-<div class="pullheader">
-<div class="pullheadertext">{{p.title}}. Last entry: {{ent.0.downloaded}}.</div>
-<div class="smallbutton" id="togglepull{{p.id}}" onclick="javascript:togglepull({{p.id}});">hide</div>
-<div class="smallbutton">update</div>
-<div class="smallbutton" onclick="javascript:cleanpull({{p.id}});">clean</div>
-<div class="smallbutton" onclick="javascript:purgepull({{p.id}});">purge</div>
+<div>
+<div class="leftpart">
 </div>
 
-{% for e in ent %}
-
-<div class="entry">
-<div style="display:table-cell;width:100%;"><h3>{{ e.title }}</h3></div>
-<div class="timestamp" style="display:table-cell;white-space: nowrap;">{{e.downloaded|date}} {{e.downloaded|time}}</div>
-<div class="undercomment"><a href="{{e.url}}">{{e.url}}</a></div>
-{% autoescape off %}
-{{e.summary}}
-{% endautoescape %}
-</div>
-
+<div class="rightpart">
+<div class="pullheader">Pulls</div>
+{% if pulls %}
+<a href="/pulls/">All</a></br>
+{% for p in pulls %}
+<a href="javascript:openpull({{p.id}})">{{p.title}}</a><br />
 {% endfor %}
+{% else %}
+You have no pulls!
+{% endif %}
+<a href="javascript:create_new_pull()">Create new pull</a>
 </div>
 
-{% endfor %}
-
 
 </div>
+
+</div>
+<div style="clear:left"></div>
 <div id="footer">Seetho (c) semenoff.andrew 2009.</div>
 </div>
+{% for p in pulls %}
+<script>
+$.ajax({
+      url: "/pull/"+{{p.id}},
+      global: false,
+      type: "POST",
+      data: ({}),
+      success: function(msg){
+	if (msg!="None"){
+	    $('.leftpart').append(msg);
+	}
+	else{
+	}
+      }
+   }
+)
+</script>
+{% endfor %}
 </body>
 </html>

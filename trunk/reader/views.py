@@ -108,11 +108,33 @@ def purge_pull(request):
     else:
 	return HttpResponse("Error")
 
+def list_pull_entries(request,pull_id):
+    p=Pull.objects.get(id=pull_id)
+    for q in FeedFilterPair.objects.filter(pull=p):
+	for e in Entry.objects.filter(feed=q.feed).exclude(pullentry__pull=p):
+	    flag1=True
+	    flag2=False
+	    flag2on=False
+	    flag3=True
+	    for f in Filter.objects.filter(pair=q):
+		if (f.type==1 and e.summary.count(f.value)==0):
+		    flag1=False
+		elif (f.type==2 and e.summary.count(f.value)==0):
+		    flag2on=True
+		elif (f.type==2):
+		    flag2on=True
+		    flag2=True
+		elif (f.type==3 and e.summary.count(f.value)!=0):
+		    flag3=False
+	    if (flag3 and flag1 and (flag2 or (flag2==flag2on))):
+		ep=PullEntry(pull=p,entry=e)
+		ep.save()
+    return render_to_response("pull_listing.html",{'pull':p})
+
 def list_pulls(request):
     for feed in Feed.objects.all():
 	check_feed(feed)
     P=Pull.objects.filter(Q(userpull__user=request.user)|Q(group__users=request.user))
-    E=[]
     for p in P:
 	for q in FeedFilterPair.objects.filter(pull=p):
 	    for e in Entry.objects.filter(feed=q.feed).exclude(pullentry__pull=p):
@@ -133,11 +155,9 @@ def list_pulls(request):
 		if (flag3 and flag1 and (flag2 or (flag2==flag2on))):
 		    ep=PullEntry(pull=p,entry=e)
 		    ep.save()
-	E.append([p,Entry.objects.filter(pullentry__pull=p,pullentry__pull__userpull__user=request.user)])
-    e=Entry.objects.filter(pullentry__pull__userpull__user=request.user)
     print P
     return render_to_response('pulls.html', {
-	'feedform':FeedForm(),'pulls':P,'entries':E,'user':request.user
+	'feedform':FeedForm(),'pulls':P,'user':request.user
     })
 
 

@@ -50,6 +50,9 @@ class PullEntry(models.Model):
     pull=models.ForeignKey(Pull)
     entry=models.ForeignKey(Entry)
 
+    class Meta:
+	ordering=["entry"]
+
 class FeedFilterPair(models.Model):
     title=models.CharField(max_length=100)
     feed=models.ForeignKey(Feed)
