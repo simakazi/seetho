@@ -51,15 +51,12 @@ def add_feed(request):
 		up=UserPull(user=request.user,pull=pull)
 		up.save()
 
-            return HttpResponseRedirect('/pulls')
+            return list_pull_entries(request,pull_id)
 	else:
-	    print "А вот и пиздец!"
+	    return HttpResponse("Error")
     else:
         form = FeedForm()
-    P=Pull.objects.filter(Q(userpull__user=request.user)|Q(group__users=request.user))
-    e=Entry.objects.filter(pullentry__pull__userpull__user=request.user)
-    return render_to_response('pulls.html', {
-	'feedform':form,'pulls':P,'entries':e,'user':request.user})
+    return Httpresponse("Error")
 
 def find_feed(request):
     if request.method=='POST':
@@ -105,6 +102,17 @@ def purge_pull(request):
 	id=request.POST['id']
 	Pull.objects.filter(id=id).delete()
 	return HttpResponse("Ok")
+    else:
+	return HttpResponse("Error")
+
+def create_pull(request):
+    if request.method=='POST':
+	title=request.POST['title']
+	p=Pull(title=title)
+	p.save()
+	up=UserPull(user=request.user,pull=p)
+	up.save()
+	return list_pull_entries(request,p.id)
     else:
 	return HttpResponse("Error")
 

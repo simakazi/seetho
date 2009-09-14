@@ -6,6 +6,7 @@
 
 <script>
 function openpull(id){
+closeaccordion();
 $('.leftpart').html("");
 $.ajax({
       url: "/pull/"+id,
@@ -24,6 +25,7 @@ $.ajax({
 }
 
 function updatepull(id){
+closeaccordion();
 $('#pullbody'+id).html("Please wait...");
 $.ajax({
       url: "/pull/"+id,
@@ -78,6 +80,7 @@ $.post("/suggest_feed/",
 }
 
 function togglepull(a){
+closeaccordion();
 $('#pullbody'+a+' > .entry').toggle();
 if ($('#togglepull'+a).text()=='show')
 $('#togglepull'+a).text('hide');
@@ -86,6 +89,7 @@ $('#togglepull'+a).text('show');
 }
 
 function cleanpull(a){
+closeaccordion();
 if (confirm("Are you SURE?\nThere will be no undo and all data will be lost!")){
 $.ajax({
       url: "/clean_pull/",
@@ -107,6 +111,7 @@ $.ajax({
 }
 
 function purgepull(a){
+closeaccordion();
 if (confirm("Are you SURE?\nThere will be no undo and all data will be lost!")){
 $.ajax({
       url: "/purge_pull/",
@@ -118,13 +123,79 @@ $.ajax({
 	 alert("Something gone wrong");
 	}
 	else{
-	 $("#pullbody"+a).text("");
+	 $("#pullbody"+a).remove();
+	 $("#openpull"+a).remove();
 	}
       }
    }
 )
 }
 }
+
+function addfeed(id){
+$("#accordionform").insertAfter("#pullheader"+id);
+$("#accordion").toggle("normal");
+$("#id_pull_id").attr("value",id);
+//$("#id_pull_title").attr("value",id);
+}
+
+function closeaccordion(){
+$("#accordion").hide();
+$("#accordionform").insertBefore("#footer");
+}
+
+
+function create_new_pull(){
+a=prompt("Please, enter new pull's title:","new pull");
+if (a!=null){
+$.ajax({
+      url: "/create_pull/",
+      global: false,
+      type: "POST",
+      data: ({title : a}),
+      success: function(msg){
+	if (msg=="Error"){
+	 alert("Something gone wrong!"); 
+	}
+	else{
+	 $('.leftpart').prepend(msg);
+	id=$(".pullbody:first").attr("id").substring(8);
+	$("#createpull").before('<div id="openpull'+id+'" class="rightmenu" onclick="javascript:openpull('+id+');">'+$('.pullheadertext:first').text()+'</div>');
+
+	}
+      }
+   }
+);
+}
+}
+
+function add_feed_to_pull(){
+$.ajax({
+      url: "/add_feed/",
+      global: false,
+      type: "POST",
+      data: ({
+	feed_url : $("#id_feed_url").attr("value"),
+	feed_cheked : $("#id_feed_cheked").attr("value"),
+	filter_must : $("#id_filter_must").attr("value"),
+	filter_may : $("#id_filter_may").attr("value"),
+	filter_not : $("#id_filter_not").attr("value"),
+	pull_title : $("#id_pull_title").attr("value"),
+	pull_id : $("#id_pull_id").attr("value")
+}),
+      success: function(msg){
+	if (msg=="Error"){
+	 alert("Something gone wrong");
+	}
+	else{
+	 $("#pullbody"+$("#id_pull_id").attr("value")).replaceWith(msg);
+	}
+      }
+   }
+)
+
+}
+
 
 </script>
 
@@ -145,12 +216,33 @@ Seetho. News filtering, systematization and group aggregation.
 <div class="button" onclick="javascript:document.location='/logout'">Logout</div>
 </div>
 
-<div class="submenu">
-<div class="subbutton" onclick="javascript:$('#accordion').toggle('normal');">Add new feed</div>
-</div>
 <div id="main">
 
-<form action="/add_feed/" method="POST">
+
+
+<div>
+<div class="leftpart">
+</div>
+
+<div class="rightpart">
+<div class="pullheader">Pulls</div>
+{% if pulls %}
+<div class="rightmenu" onclick="javascript:document.location='/pulls/';">All</div>
+{% for p in pulls %}
+<div id="openpull{{p.id}}" class="rightmenu" onclick="javascript:openpull({{p.id}});">{{p.title}}</div>
+{% endfor %}
+{% else %}
+You have no pulls!
+{% endif %}
+<div id="createpull" class="rightmenu" onclick="javascript:create_new_pull();">Create new pull</div>
+</div>
+
+
+</div>
+
+</div>
+
+<div id="accordionform">
 <div>
 {% for field in feedform %}
 {% if field.errors %}
@@ -176,49 +268,30 @@ News contain <u>some</u> words:<input id="id_filter_may" name="filter_may"/><br 
 News <u>don't</u> contain <u>any</u> word:<input id="id_filter_not" name="filter_not"/><br />
 <input type="button" onclick="$('#accordion').accordion('activate',2);" value="Next" /><input type="button" onclick="$('#accordion').accordion('activate',0);" value="Back" />
 </div>
-<h3><a href="#">Step №3. Select pull for collected news</a></h3>
+<h3><a href="#">Step №3. Submit</a></h3>
 <div>
-Select or create new pull:<br />
-<input id="id_pull_title" name="pull_title" value="Add new pull"/>
 <input type="hidden" id="id_pull_id" name="pull_id" value="-1"/>
+<input type="hidden" id="id_pull_title" name="pull_title" value="Add new pull"/>
+And finaly, check all data and commit it.<br />
+<!--Select or create new pull:<br />
+<input id="id_pull_title" name="pull_title" value="Add new pull"/>
+
 <br />
 <select style="width: 90%" id="pull_exist" onchange="$('#id_pull_title').attr('value',$('#pull_exist :selected').text());$('#id_pull_id').attr('value',$(this).val());">
 <option value="-1" selected="true">Add new pull</option>
 {% for p in pulls %}
 <option value="{{ p.id }}">{{ p.title }}</option>
 {% endfor %}
-</select><br />
-<input type="submit">Done</input><input type="button" onclick="$('#accordion').accordion('activate',1);" value="Back" />
+</select><br /-->
+<input type="button" value="Add feed" onclick="add_feed_to_pull();"></input><input type="button" onclick="$('#accordion').accordion('activate',1);" value="Back" />
 </div>
 </div>
-</form>
+</div>
 
 <script type="text/javascript">
   $("#accordion").accordion();
   $("#accordion").hide();
 </script>
-
-<div>
-<div class="leftpart">
-</div>
-
-<div class="rightpart">
-<div class="pullheader">Pulls</div>
-{% if pulls %}
-<a href="/pulls/">All</a></br>
-{% for p in pulls %}
-<a href="javascript:openpull({{p.id}})">{{p.title}}</a><br />
-{% endfor %}
-{% else %}
-You have no pulls!
-{% endif %}
-<a href="javascript:create_new_pull()">Create new pull</a>
-</div>
-
-
-</div>
-
-</div>
 <div style="clear:left"></div>
 <div id="footer">Seetho (c) semenoff.andrew 2009.</div>
 </div>
