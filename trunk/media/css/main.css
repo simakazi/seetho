@@ -88,6 +88,7 @@ font-size:8pt;
 text-align:center;
 color:#000000;
 height:10px;
+white-space:nowrap;
 display:table-cell;
 vertical-align:middle;
 padding-left:5px;
@@ -128,7 +129,7 @@ border: solid 5px #ffffff;
 }
 
 div.accordion {
-width:600px;
+width:100%;
 }
 
 #container {
@@ -138,15 +139,22 @@ width:600px;
 }
 
 
+.accordion a {
+color:#000000;
+}
 
 .accordion h3 {
 font-size:9pt;
-color:#333016;
-background-color:#e5c3df;
-border:solid 1px #ead8ec;
+color:#000000;
+background-color:#5cbf45;
+border:solid 1px #38a223;
 }
 .accordion div {
-background-color:#ead8ec;
+background-color:#ffffff;
+}
+
+#accordionform {
+padding-bottom:10px;
 }
 
 div.mainmenu {
@@ -195,14 +203,14 @@ background-color:#ffffff;
 }
 
 div.subbutton {
-color:#b39539;
+color:#000000;
 font-size:10pt;
-width:130px;
+width:150px;
 height:20px;
 text-align:center;
 vertical-align:middle;
 display:table-cell;
-background-color:#ead8ec;
+background-color:#5cbf45;
 padding-left:2px;
 padding-right:2px;
 padding-top:2px;
@@ -212,8 +220,8 @@ padding-bottom:2px;
 div.subbutton:hover {
 cursor:pointer;
 cursor:hand;
-color:#cac8fc;
-background-color:#c3a549;
+color:#000000;
+background-color:#ffffff;
 }
 
 div.timestamp {
@@ -236,6 +244,20 @@ div.undercomment {
 color:#a09b75;
 padding-right:10px;
 font-size:8pt;
+}
+
+div.rightmenu {
+color:#000000;
+padding-left:10px;
+background-color:#ffffff;
+
+}
+
+div.rightmenu:hover {
+cursor:pointer;
+cursor:hand;
+color:#000000;
+background-color:#5cbf45;
 }
 
 h1 {

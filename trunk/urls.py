@@ -8,6 +8,7 @@ PROJECT_ROOT = os.path.dirname(__file__)
 
 urlpatterns = patterns('',
  (r'^$','reader.views.index'),
+ (r'^create_pull/$','reader.views.create_pull'),
  (r'^clean_pull/$','reader.views.clean_pull'),
  (r'^purge_pull/$','reader.views.purge_pull'),
  (r'^pulls/$','reader.views.list_pulls'),
