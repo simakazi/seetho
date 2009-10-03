@@ -1,0 +1,10 @@
+#summary 09.09 - now
+#labels Phase-Design,milestone
+
+= Milestone #1 =
+ * Aggregation _done_
+ * Stupid filters _done_
+ * OpenID-authorization _done_
+ * Feeds and Pulls management _particaly_
+ * Groups _in progress_
+ * Backend _done_
