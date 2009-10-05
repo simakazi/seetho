@@ -79,7 +79,7 @@ $.post("/suggest_feed/",
 );*/
 }
 
-function togglepull(a){
+function togglegroup(a){
 closeaccordion();
 $('#pullbody'+a+' > .entry').toggle();
 if ($('#togglepull'+a).text()=='show')
@@ -145,11 +145,11 @@ $("#accordionform").insertBefore("#footer");
 }
 
 
-function create_new_pull(){
-a=prompt("Please, enter new pull's title:","new pull");
+function create_new_group(){
+a=prompt("Please, enter new group's title:","new group");
 if (a!=null){
 $.ajax({
-      url: "/create_pull/",
+      url: "/create_group/",
       global: false,
       type: "POST",
       data: ({title : a}),
@@ -160,7 +160,7 @@ $.ajax({
 	else{
 	 $('.leftpart').prepend(msg);
 	id=$(".pullbody:first").attr("id").substring(8);
-	$("#createpull").before('<div id="openpull'+id+'" class="rightmenu" onclick="javascript:openpull('+id+');">'+$('.pullheadertext:first').text()+'</div>');
+	$("#creategroup").before('<div id="opengroup'+id+'" class="rightmenu" onclick="javascript:opengroup('+id+');">'+$('.pullheadertext:first').text()+'</div>');
 
 	}
       }
@@ -209,8 +209,8 @@ Seetho. News filtering, systematization and group aggregation.
 
 <div class="mainmenu">
 <div class="button" onclick="javascript:document.location='/'">News</div>
-<div class="button_disabled">Pulls</div>
-<div class="button" onclick="javascript:document.location='/groups'">Groups</div>
+<div class="button" onclick="javascript:document.location='/pulls'">Pulls</div>
+<div class="button_disabled">Groups</div>
 <div class="button" onclick="javascript:document.location='/search'">Search</div>
 <div class="button" onclick="javascript:document.location='/profile'">Profile</div>
 <div class="button" onclick="javascript:document.location='/logout'">Logout</div>
@@ -225,78 +225,29 @@ Seetho. News filtering, systematization and group aggregation.
 </div>
 
 <div class="rightpart">
-<div class="pullheader">Pulls</div>
-{% if pulls %}
-<div class="rightmenu" onclick="javascript:document.location='/pulls/';">All</div>
-{% for p in pulls %}
-<div id="openpull{{p.id}}" class="rightmenu" onclick="javascript:openpull({{p.id}});">{{p.title}}</div>
+<div class="pullheader">Groups</div>
+{% if groups %}
+<div class="rightmenu" onclick="javascript:document.location='/groups/';">All</div>
+{% for p in groups %}
+<div id="opengroup{{p.id}}" class="rightmenu" onclick="javascript:opengroup({{p.id}});">{{p.title}}</div>
 {% endfor %}
+{% else %}
+You have no groups!
 {% endif %}
-<div id="createpull" class="rightmenu" onclick="javascript:create_new_pull();">Create new pull</div>
+<div id="creategroup" class="rightmenu" onclick="javascript:create_new_group();">Create new group</div>
 </div>
 
 
 </div>
 
 </div>
-
-<div id="accordionform">
-<div>
-{% for field in feedform %}
-{% if field.errors %}
-{{forloop.counter}}. {{field.label}}{{field.errors}}<br/>
-{% endif %}
-{% endfor %}
-</div>
-<div id="accordion" class="accordion">
-<h3><a href="#">Step №1. Select feed</a></h3>
-<div style="position: relative;">
-Please, enter wanted site's url, and press "Check"-button. Program will automaticaly find rss/atom source.<br />
-<input id="id_feed_url" name="feed_url" value="http://" onkeydown='$(this).css("color","black");' onchange='$("#id_feed_cheked").attr("value","False");' onkeyup='javascript:suggest_feed();'/>
-<input type="hidden" value="False" name="feed_cheked" id="id_feed_cheked" />
-<input type="button" onclick='javascript:findFeed();' value="Check" /><br />
-<div id="suggest_feed_div" style="position: absolute; left: 0px; top: 60px;"></div>
-<input type="button" onclick="$('#accordion').accordion('activate',1);" value="Next" />
-</div>
-<h3><a href="#">Step №2. Construct filter</a></h3>
-<div>
-You can construct filter here. Input words, separated by commas.<br />
-News contain <u>all</u> words:<input id="id_filter_must" name="filter_must"/><br />
-News contain <u>some</u> words:<input id="id_filter_may" name="filter_may"/><br />
-News <u>don't</u> contain <u>any</u> word:<input id="id_filter_not" name="filter_not"/><br />
-<input type="button" onclick="$('#accordion').accordion('activate',2);" value="Next" /><input type="button" onclick="$('#accordion').accordion('activate',0);" value="Back" />
-</div>
-<h3><a href="#">Step №3. Submit</a></h3>
-<div>
-<input type="hidden" id="id_pull_id" name="pull_id" value="-1"/>
-<input type="hidden" id="id_pull_title" name="pull_title" value="Add new pull"/>
-And finaly, check all data and commit it.<br />
-<!--Select or create new pull:<br />
-<input id="id_pull_title" name="pull_title" value="Add new pull"/>
-
-<br />
-<select style="width: 90%" id="pull_exist" onchange="$('#id_pull_title').attr('value',$('#pull_exist :selected').text());$('#id_pull_id').attr('value',$(this).val());">
-<option value="-1" selected="true">Add new pull</option>
-{% for p in pulls %}
-<option value="{{ p.id }}">{{ p.title }}</option>
-{% endfor %}
-</select><br /-->
-<input type="button" value="Add feed" onclick="add_feed_to_pull();"></input><input type="button" onclick="$('#accordion').accordion('activate',1);" value="Back" />
-</div>
-</div>
-</div>
-
-<script type="text/javascript">
-  $("#accordion").accordion();
-  $("#accordion").hide();
-</script>
 <div style="clear:left"></div>
 <div id="footer">Seetho (c) semenoff.andrew 2009.</div>
 </div>
-{% for p in pulls %}
+{% for p in groups %}
 <script>
 $.ajax({
-      url: "/pull/"+{{p.id}},
+      url: "/group/"+{{p.id}},
       global: false,
       type: "POST",
       data: ({}),

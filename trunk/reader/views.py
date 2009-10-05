@@ -3,7 +3,7 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect,HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout as auth_logout
-from models import Feed,Entry,News,Pull,FeedFilterPair,UserPull,Filter,PullEntry
+from models import *
 from forms import FeedForm
 from reader.feedget import feedfinder,feedparser
 from datetime import datetime
@@ -23,8 +23,8 @@ def add_feed(request):
 	    pull_title=form.cleaned_data['pull_title']
 	    pull_id=form.cleaned_data['pull_id']
 	    print filter_must,filter_may,filter_not
-	    if not feed_cheked:
-		feed_url=feedfinder.feed(feed_url)
+	    #if not feed_cheked:
+	    #	feed_url=feedfinder.feed(feed_url)
 	    feed=Feed.objects.filter(url=feed_url)
 	    if not (feed):
 		feed=Feed(url=feed_url,last_cheked="2009-01-01 00:00")
@@ -50,13 +50,25 @@ def add_feed(request):
 	    if pull_id==-1:
 		up=UserPull(user=request.user,pull=pull)
 		up.save()
-
             return list_pull_entries(request,pull_id)
 	else:
 	    return HttpResponse("Error")
     else:
         form = FeedForm()
     return Httpresponse("Error")
+
+def list_group_pulls(request,group_id):
+    pass
+
+def create_group(request):
+    title=request.POST["title"]
+    g=Group(title=title)
+    g.user_set.add(request.user)
+    g.save()
+    return list_group_pulls(request,g.id)
+
+def list_groups(request):
+    return render_to_response("groups.html",{"groups":request.user.group_set.all(),"user":request.user})
 
 def find_feed(request):
     if request.method=='POST':
@@ -140,8 +152,8 @@ def list_pull_entries(request,pull_id):
     return render_to_response("pull_listing.html",{'pull':p})
 
 def list_pulls(request):
-    for feed in Feed.objects.all():
-	check_feed(feed)
+    #for feed in Feed.objects.all():
+    #	check_feed(feed)
     P=Pull.objects.filter(Q(userpull__user=request.user)|Q(group__users=request.user))
     for p in P:
 	for q in FeedFilterPair.objects.filter(pull=p):
@@ -174,7 +186,7 @@ def logout(request):
     auth_logout(request)
     return HttpResponseRedirect("/")
 
-
+"""
 def check_feed(q):
     if True:#q.last_cheked<time.time()-5 or q.last_cheked==-1:
 	R=feedparser.parse(q.url,modified=q.last_cheked.utctimetuple())
@@ -205,3 +217,4 @@ def check_feed(q):
 		print
 		count+=1
 	print len(E)-count,"of them are already in db"
+"""
