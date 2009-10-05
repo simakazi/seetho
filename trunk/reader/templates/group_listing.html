@@ -1,0 +1,37 @@
+{% load ifpermit %}
+<div class="groupbody" id="groupbody{{group.id}}">
+
+<div class="pullheader" id="groupheader{{group.id}}">
+<div class="pullheadertext">{{group.title}} - {{group.members.count}} user(s)</div>
+{% ifpermit rights A %}
+<div class="smallbutton" onclick="javascript:addpull({{group.id}});">add pull</div>
+{% endifpermit %}
+<div class="smallbutton" id="togglegroup{{group.id}}" onclick="javascript:togglegroup({{group.id}});">hide</div>
+<div class="smallbutton" onclick="javascript:updategroup({{group.id}});">update</div>
+{% ifpermit rights C %}
+<div class="smallbutton" onclick="javascript:purgegroup({{group.id}});">purge</div>
+{% endifpermit %}
+</div>
+
+<div class="grouppulls" id="grouppulls{{group.id}}"></div>
+
+</div>
+{% for p in group.pulls.all %}
+<script>
+$.ajax({
+      url: "/pull/"+{{p.id}},
+      global: false,
+      type: "POST",
+      data: ({}),
+      success: function(msg){
+	if (msg!="None"){
+	    $('#grouppulls'+{{group.id}}).append(msg);
+	    //$('#pullbody'+{{p.id}}).css("width","95%").css("margin-left","5px").css("margin-right","5px");
+	}
+	else{
+	}
+      }
+   }
+)
+</script>
+{% endfor %}

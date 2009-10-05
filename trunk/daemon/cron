@@ -2,7 +2,7 @@ SHELL=/bin/sh
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 
 # m h dom mon dow command
-*/5 *	* * *   cd ./ && python run.py > /dev/null
+*/5 *	* * *   cd $HOME/dev/django/diplom0/daemon && python run.py > /dev/null
 #
 
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import render_to_response
-from django.http import HttpResponseRedirect,HttpResponse
+from django.http import HttpResponseRedirect,HttpResponse,HttpResponseServerError,HttpResponseNotFound
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout as auth_logout
 from models import *
@@ -52,33 +52,44 @@ def add_feed(request):
 		up.save()
             return list_pull_entries(request,pull_id)
 	else:
-	    return HttpResponse("Error")
+	    return HttpResponseServerError("Error {" + form.errors+"}")
     else:
         form = FeedForm()
-    return Httpresponse("Error")
+    return HttpResponseServerError("Error")
 
-def list_group_pulls(request,group_id):
-    pass
+def purge_group(request):
+    if request.method=='POST':
+	try:
+	    id=request.POST['id']
+	    Group.objects.filter(id=id).delete()
+	    return HttpResponse("Ok")
+	except:
+	    return HttpResponseNotFound("")
+    else:
+	return HttpResponseServerError("Bad request.")
+
+def list_group(request,group_id):
+    g=Group.objects.get(id=group_id)
+    return render_to_response("group_listing.html",{"group":g,"rights":Membership.objects.get(group=g,user=request.user).rights})
 
 def create_group(request):
     title=request.POST["title"]
     g=Group(title=title)
-    g.user_set.add(request.user)
     g.save()
-    return list_group_pulls(request,g.id)
+    m=Membership(user=request.user,group=g,rights='C')
+    m.save()
+    return list_group(request,g.id)
 
 def list_groups(request):
     return render_to_response("groups.html",{"groups":request.user.group_set.all(),"user":request.user})
 
 def find_feed(request):
-    if request.method=='POST':
-	url=request.POST["url"]
-	print url
+    if request.method=='GET':
+	url=request.GET["url"]
 	url=feedfinder.feed(url)
-	print url
 	return HttpResponse(url)
     else:
-	return "Error"
+	return HttpResponseServerError("Bad request.")
 
 def suggest_feed(request):
     if request.method=='POST':
@@ -92,9 +103,6 @@ def suggest_feed(request):
 	return "Error"
 
 def index(request):
-    """if (request.user.is_authenticated()):
-	return list_feeds(request)
-    else:"""
     return render_to_response('index.html',{
 	    'news':News.objects.all()[:15],
 	    'user':request.user
@@ -103,35 +111,48 @@ def index(request):
 
 def clean_pull(request):
     if request.method=='POST':
-	id=request.POST['id']
-	PullEntry.objects.filter(pull__id=id).delete()
-	return HttpResponse("Ok")
+	try:
+	    id=request.POST['id']
+	    PullEntry.objects.filter(pull__id=id).delete()
+	    return HttpResponse("Ok")
+	except:
+	    return HttpResponseNotFound("")
     else:
-	return HttpResponse("Error")
+	return HttpResponseServerError("Bad request.")
 
 def purge_pull(request):
     if request.method=='POST':
-	id=request.POST['id']
-	Pull.objects.filter(id=id).delete()
-	return HttpResponse("Ok")
+	try:
+	    id=request.POST['id']
+	    Pull.objects.filter(id=id).delete()
+	    return HttpResponse("Ok")
+	except:
+	    return HttpResponseNotFound("")
     else:
-	return HttpResponse("Error")
+	return HttpResponseServerError("Bad request.")
 
 def create_pull(request):
     if request.method=='POST':
 	title=request.POST['title']
 	p=Pull(title=title)
 	p.save()
+	group_id=-1
+	try:
+	    group_id=request.POST["group_id"]
+	    group=Group.objects.get(id=group_id)
+	    group.pulls.add(p)
+	    group.save
+	except:
+	    pass
 	up=UserPull(user=request.user,pull=p)
 	up.save()
 	return list_pull_entries(request,p.id)
     else:
-	return HttpResponse("Error")
+	return HttpResponseServerError("Bad request.")
 
-def list_pull_entries(request,pull_id):
-    p=Pull.objects.get(id=pull_id)
+def full_pull(p):
     for q in FeedFilterPair.objects.filter(pull=p):
-	for e in Entry.objects.filter(feed=q.feed).exclude(pullentry__pull=p):
+	for e in Entry.objects.filter(feed=q.feed,downloaded__gt=q.last_cheked).exclude(pullentry__pull=p):
 	    flag1=True
 	    flag2=False
 	    flag2on=False
@@ -149,33 +170,21 @@ def list_pull_entries(request,pull_id):
 	    if (flag3 and flag1 and (flag2 or (flag2==flag2on))):
 		ep=PullEntry(pull=p,entry=e)
 		ep.save()
-    return render_to_response("pull_listing.html",{'pull':p})
+	q.last_cheked=datetime.now()
+	q.save()
+
+def list_pull_entries(request,pull_id):
+    try:
+	p=Pull.objects.get(id=pull_id)
+	full_pull(p)
+	return render_to_response("pull_listing.html",{'pull':p})
+    except:
+	return HttpResponseNotFound("")
 
 def list_pulls(request):
-    #for feed in Feed.objects.all():
-    #	check_feed(feed)
-    P=Pull.objects.filter(Q(userpull__user=request.user)|Q(group__users=request.user))
+    P=Pull.objects.filter(Q(userpull__user=request.user)|Q(group__members=request.user))
     for p in P:
-	for q in FeedFilterPair.objects.filter(pull=p):
-	    for e in Entry.objects.filter(feed=q.feed).exclude(pullentry__pull=p):
-		flag1=True
-		flag2=False
-		flag2on=False
-		flag3=True
-		for f in Filter.objects.filter(pair=q):
-		    if (f.type==1 and e.summary.count(f.value)==0):
-			flag1=False
-		    elif (f.type==2 and e.summary.count(f.value)==0):
-			flag2on=True
-		    elif (f.type==2):
-			flag2on=True
-			flag2=True
-		    elif (f.type==3 and e.summary.count(f.value)!=0):
-			flag3=False
-		if (flag3 and flag1 and (flag2 or (flag2==flag2on))):
-		    ep=PullEntry(pull=p,entry=e)
-		    ep.save()
-    print P
+	full_pull(p)
     return render_to_response('pulls.html', {
 	'feedform':FeedForm(),'pulls':P,'user':request.user
     })
