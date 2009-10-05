@@ -1,92 +1,25 @@
-<html>
-<head>
-
-<script type="text/javascript" src="/js/jquery.js"></script>  
-<script type="text/javascript" src="/js/jquery-ui.js"></script>  
-<script type="text/javascript" src="/js/pulls.js"></script>
-<script type="text/javascript" src="/js/groups.js"></script>
-
-<link type="text/css" href="/css/main.css" rel="stylesheet" />
-</head>
-<body>
-<div id="container">
-<div id="header">
-Seetho. News filtering, systematization and group aggregation.
-</div>
-
-<div class="mainmenu">
+{% extends "index.html" %}
+{% block mainmenu %}
 <div class="button" onclick="javascript:document.location='/'">News</div>
 <div class="button" onclick="javascript:document.location='/pulls'">Pulls</div>
 <div class="button_disabled">Groups</div>
 <div class="button" onclick="javascript:document.location='/search'">Search</div>
 <div class="button" onclick="javascript:document.location='/profile'">Profile</div>
 <div class="button" onclick="javascript:document.location='/logout'">Logout</div>
-</div>
+{% endblock %}
 
-<div id="main">
-
-
-
-<div>
-<div class="leftpart">
-</div>
-
-<div class="rightpart">
+{% block rightpart %}
 <div class="pullheader">Groups</div>
 {% if groups %}
 <div class="rightmenu" onclick="javascript:document.location='/groups/';">All</div>
 {% for p in groups %}
 <div id="opengroup{{p.id}}" class="rightmenu" onclick="javascript:opengroup({{p.id}});">{{p.title}}</div>
 {% endfor %}
-{% else %}
-You have no groups!
 {% endif %}
 <div id="creategroup" class="rightmenu" onclick="javascript:create_new_group();">Create new group</div>
-</div>
+{% endblock %}
 
-
-</div>
-
-</div>
-
-
-<div id="accordionform">
-<div id="accordion" class="accordion">
-<h3><a href="#">Step №1. Select feed</a></h3>
-<div style="position: relative;">
-Please, enter wanted site's url, and press "Check"-button. Program will automaticaly find rss/atom source.<br />
-<input id="id_feed_url" name="feed_url" value="http://" onkeydown='$(this).css("color","black");' onchange='$("#id_feed_cheked").attr("value","False");' onkeyup='javascript:suggest_feed();'/>
-<input type="hidden" value="False" name="feed_cheked" id="id_feed_cheked" />
-<input type="button" onclick='javascript:findFeed();' value="Check" /><br />
-<div id="suggest_feed_div" style="position: absolute; left: 0px; top: 60px;"></div>
-<input type="button" onclick="$('#accordion').accordion('activate',1);" value="Next" />
-</div>
-<h3><a href="#">Step №2. Construct filter</a></h3>
-<div>
-You can construct filter here. Input words, separated by commas.<br />
-News contain <u>all</u> words:<input id="id_filter_must" name="filter_must"/><br />
-News contain <u>some</u> words:<input id="id_filter_may" name="filter_may"/><br />
-News <u>don't</u> contain <u>any</u> word:<input id="id_filter_not" name="filter_not"/><br />
-<input type="button" onclick="$('#accordion').accordion('activate',2);" value="Next" /><input type="button" onclick="$('#accordion').accordion('activate',0);" value="Back" />
-</div>
-<h3><a href="#">Step №3. Submit</a></h3>
-<div>
-<input type="hidden" id="id_pull_id" name="pull_id" value="-1"/>
-<input type="hidden" id="id_pull_title" name="pull_title" value="Add new pull"/>
-And finaly, check all data and commit it.<br />
-<input type="button" value="Add feed" onclick="add_feed_to_pull();"></input><input type="button" onclick="$('#accordion').accordion('activate',1);" value="Back" />
-</div>
-</div>
-</div>
-
-<script type="text/javascript">
-  $("#accordion").accordion();
-  $("#accordion").hide();
-</script>
-
-<div style="clear:left"></div>
-<div id="footer">Seetho (c) semenoff.andrew 2009.</div>
-</div>
+{% block scripts %}
 {% for p in groups %}
 <script>
 $.ajax({
@@ -103,5 +36,4 @@ $.ajax({
 )
 </script>
 {% endfor %}
-</body>
-</html>
+{% endblock %}

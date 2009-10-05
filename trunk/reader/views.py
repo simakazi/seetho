@@ -68,10 +68,33 @@ def purge_group(request):
     else:
 	return HttpResponseServerError("Bad request.")
 
-def list_group(request,group_id):
-    g=Group.objects.get(id=group_id)
-    return render_to_response("group_listing.html",{"group":g,"rights":Membership.objects.get(group=g,user=request.user).rights})
+def unsubscribe_group(request,group_id):
+    try:
+	g=Group.objects.get(id=group_id)
+	Membership.objects.get(group=g,user=request.user).delete()
+	return list_group(request,group_id)
+    except:
+	return HttpResponseNotFound()
+def subscribe_group(request,group_id):
+    try:
+	g=Group.objects.get(id=group_id)
+	m=Membership(group=g,user=request.user,rights="R")
+	m.save()
+	return list_group(request,group_id)
+    except:
+	return HttpResponseNotFound()
 
+def list_group(request,group_id):
+    try:
+	g=Group.objects.get(id=group_id)
+	rights=""
+	try:
+	    rights=Membership.objects.get(group=g,user=request.user).rights
+	except:
+	    rights="N"
+	return render_to_response("group_listing.html",{"group":g,"rights":rights})
+    except:
+	return HttpResponseNotFound()
 def create_group(request):
     title=request.POST["title"]
     g=Group(title=title)
@@ -82,6 +105,18 @@ def create_group(request):
 
 def list_groups(request):
     return render_to_response("groups.html",{"groups":request.user.group_set.all(),"user":request.user})
+
+def search(request,find_what):
+    if find_what=="":
+	return render_to_response("search.html",{})
+    else:
+	return render_to_response("search.html",
+	{
+	    "find_what":find_what,
+	    "groups":Group.objects.filter(title__contains=find_what),
+	    "pulls":Pull.objects.filter(title__contains=find_what)
+	}
+	)
 
 def find_feed(request):
     if request.method=='GET':
@@ -103,7 +138,7 @@ def suggest_feed(request):
 	return "Error"
 
 def index(request):
-    return render_to_response('index.html',{
+    return render_to_response('news.html',{
 	    'news':News.objects.all()[:15],
 	    'user':request.user
 	})

@@ -1,0 +1,35 @@
+{% extends "index.html" %}
+{% block mainmenu %}
+{% if user.is_authenticated %}
+<div class="button_disabled">News</div>
+<div class="button" onclick="javascript:document.location='/pulls'">Pulls</div>
+<div class="button" onclick="javascript:document.location='/groups'">Groups</div>
+<div class="button" onclick="javascript:document.location='/search'">Search</div>
+<div class="button" onclick="javascript:document.location='/profile'">Profile</div>
+<div class="button" onclick="javascript:document.location='/logout'">Logout</div>
+{% else %}
+<div class="button_disabled">News</div>
+<div class="button" onclick="javascript:document.location='/openid/login'">Sign in</div>
+{% endif %}
+{% endblock %}
+
+{% block main %}
+{% if news %}
+<div class="news">
+<h2>Last news on Seetho:</h2>
+    {% for n in news %}
+	<div class="entry">
+	    <h1>{{n.title}}</h1>
+	    <div class="timestamp">{{n.published}}</div>
+	    {% autoescape off%}
+	    {{n.text}}
+	    {% endautoescape %}
+	</div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}
+
+
+{% block accordion %}
+{% endblock %}

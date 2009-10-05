@@ -1,0 +1,57 @@
+{% extends "index.html" %}
+{% block mainmenu %}
+<div class="button" onclick="javascript:document.location='/'">News</div>
+<div class="button" onclick="javascript:document.location='/pulls'">Pulls</div>
+<div class="button" onclick="javascript:document.location='/groups'">Groups</div>
+<div class="button_disabled">Search</div>
+<div class="button" onclick="javascript:document.location='/profile'">Profile</div>
+<div class="button" onclick="javascript:document.location='/logout'">Logout</div>
+{% endblock %}
+
+{% block main %}
+<input name="find_what" id="find_what" value="{{find_what}}"></input><button onclick="document.location='/search/'+$('#find_what').attr('value');">Search!</button>
+
+<div name="results" id="results">
+{% if find_what %}
+You've searched for {{find_what}}.<br />
+Found {{groups.count}} groups and {{pulls.count}} pulls.
+{% endif %}
+</div>
+
+{% for g in groups %}
+<script>
+$.ajax({
+      url: "/group/"+{{g.id}},
+      global: false,
+      type: "GET",
+      data: ({}),
+      success: function(msg){
+	if (msg!="None"){
+	    $('#results').append(msg);
+	}
+      }
+   }
+)
+</script>
+{% endfor %}
+
+{% for p in pulls %}
+<script>
+$.ajax({
+      url: "/pull/"+{{p.id}},
+      global: false,
+      type: "POST",
+      data: ({}),
+      success: function(msg){
+	if (msg!="None"){
+	    $('#results').append(msg);
+	}
+	else{
+	}
+      }
+   }
+)
+</script>
+{% endfor %}
+
+{% endblock %}

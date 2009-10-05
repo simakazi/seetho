@@ -1,9 +1,17 @@
 # -*- coding: utf-8 -*-
 from django.template import Library
 from django.template import Node, NodeList, Template, Context, Variable
+from django.template.defaultfilters import stringfilter
 register=Library()
 
-PermitDict={'C':5,'A':4,'M':3,'R':2,'B':1}
+PermitDict={'C':5,'A':4,'M':3,'R':2,'B':1,'N':0}
+FullRights={'C':'creator','A':'admin','M':'moderator','R':'reader','B':'banned','N':'nobody'}
+
+@register.filter
+@stringfilter
+def full_right(val):
+    print val
+    return FullRights[val]
 
 class IfPermitNode(Node):
     def __init__(self, var1, var2, nodelist_true, nodelist_false):
