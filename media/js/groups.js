@@ -88,4 +88,54 @@ $.ajax({
 }
 }
 
+function opengroup(id){
+closeaccordion();
+$('.leftpart').html("");
+$.ajax({
+      url: "/group/"+id,
+      global: false,
+      type: "GET",
+      data: ({}),
+      success: function(msg){
+	if (msg!="None"){
+	    $('.leftpart').html(msg);
+	}
+	else{
+	}
+      }
+   }
+)
+}
 
+function subscribe_group(id){
+$.ajax({
+      url: "/subscribe_group/"+id,
+      global: false,
+      type: "POST",
+      data: ({}),
+      success: function(msg){
+	if (msg!="None"){
+	    $('#groupbody'+id).replaceWith(msg);
+	}
+      }
+   }
+)
+}
+
+function unsubscribe_group(id){
+$.ajax({
+      url: "/unsubscribe_group/"+id,
+      global: false,
+      type: "POST",
+      data: ({}),
+      success: function(msg){
+	if (msg!="None"){
+	    if ($(".button_disabled").text()!="Search")
+		$('#groupbody'+id).replaceWith("");
+	else	
+	    $('#groupbody'+id).replaceWith(msg);
+	}
+      }
+   }
+)
+}

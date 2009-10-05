@@ -2,7 +2,17 @@
 <div class="groupbody" id="groupbody{{group.id}}">
 
 <div class="pullheader" id="groupheader{{group.id}}">
-<div class="pullheadertext">{{group.title}} - {{group.members.count}} user(s)</div>
+<div class="pullheadertext">{{group.title}} - {{group.members.count}} user(s) 
+{% ifnotequal rights "N" %}
+you're {{ rights|full_right }} of this group
+{% endifnotequal %}
+</div>
+{% ifequal rights "N" %}
+<div class="smallbutton" onclick="javascript:subscribe_group({{group.id}});">subscribe</div>
+{% endifequal %}
+{% ifequal rights "R" %}
+<div class="smallbutton" onclick="javascript:unsubscribe_group({{group.id}});">unsubscribe</div>
+{% endifequal %}
 {% ifpermit rights A %}
 <div class="smallbutton" onclick="javascript:addpull({{group.id}});">add pull</div>
 {% endifpermit %}

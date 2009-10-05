@@ -1,8 +1,14 @@
 <html>
 <head>
-<link type="text/css" href="css/main.css" rel="stylesheet" />
-<script type="text/javascript" src="js/jquery.js"></script>   
+
+<script type="text/javascript" src="/js/jquery.js"></script>  
+<script type="text/javascript" src="/js/jquery-ui.js"></script>  
+<script type="text/javascript" src="/js/pulls.js"></script>
+<script type="text/javascript" src="/js/groups.js"></script>
+
+<link type="text/css" href="/css/main.css" rel="stylesheet" />
 </head>
+<title>Seetho. News filtering, systematization and group aggregation.</title>
 <body>
 <div id="container">
 <div id="header">
@@ -10,38 +16,68 @@ Seetho. News filtering, systematization and group aggregation.
 </div>
 
 <div class="mainmenu">
-{% if user.is_authenticated %}
-
-<div class="button_disabled">News</div>
-<div class="button" onclick="javascript:document.location='/pulls'">Pulls</div>
-<div class="button" onclick="javascript:document.location='/groups'">Groups</div>
-<div class="button" onclick="javascript:document.location='/search'">Search</div>
-<div class="button" onclick="javascript:document.location='/profile'">Profile</div>
-<div class="button" onclick="javascript:document.location='/logout'">Logout</div>
-{% else %}
-<div class="button_disabled">News</div>
-<div class="button" onclick="javascript:document.location='/openid/login'">Sign in</div>
-{% endif %}
+{% block mainmenu %} 
+{% endblock %}
 </div>
 
 <div id="main">
 
-{% if news %}
-<div class="news">
-<h2>Last news on Seetho:</h2>
-    {% for n in news %}
-	<div class="entry">
-	    <h1>{{n.title}}</h1>
-	    <div class="timestamp">{{n.published}}</div>
-	    {% autoescape off%}
-	    {{n.text}}
-	    {% endautoescape %}
-	</div>
-    {% endfor %}
+{% block main %}
+<div class="leftpart">
+{% block leftpart%}
+{% endblock %}
 </div>
-{% endif %}
+
+<div class="rightpart">
+{% block rightpart %}
+{% endblock %}
 </div>
+{% endblock %}
+
+</div>
+<div style="clear:left"></div>
+
+{% block scripts %}
+{% endblock %}
+
+{% block accordion %}
+<div id="accordionform">
+<div id="accordion" class="accordion">
+<h3><a href="#">Step №1. Select feed</a></h3>
+<div style="position: relative;">
+Please, enter wanted site's url, and press "Check"-button. Program will automaticaly find rss/atom source.<br />
+<input id="id_feed_url" name="feed_url" value="http://" onkeydown='$(this).css("color","black");' onchange='$("#id_feed_cheked").attr("value","False");' onkeyup='javascript:suggest_feed();'/>
+<input type="hidden" value="False" name="feed_cheked" id="id_feed_cheked" />
+<input type="button" onclick='javascript:findFeed();' value="Check" /><br />
+<div id="suggest_feed_div" style="position: absolute; left: 0px; top: 60px;"></div>
+<input type="button" onclick="$('#accordion').accordion('activate',1);" value="Next" />
+</div>
+<h3><a href="#">Step №2. Construct filter</a></h3>
+<div>
+You can construct filter here. Input words, separated by commas.<br />
+News contain <u>all</u> words:<input id="id_filter_must" name="filter_must"/><br />
+News contain <u>some</u> words:<input id="id_filter_may" name="filter_may"/><br />
+News <u>don't</u> contain <u>any</u> word:<input id="id_filter_not" name="filter_not"/><br />
+<input type="button" onclick="$('#accordion').accordion('activate',2);" value="Next" /><input type="button" onclick="$('#accordion').accordion('activate',0);" value="Back" />
+</div>
+<h3><a href="#">Step №3. Submit</a></h3>
+<div>
+<input type="hidden" id="id_pull_id" name="pull_id" value="-1"/>
+<input type="hidden" id="id_pull_title" name="pull_title" value="Add new pull"/>
+And finaly, check all data and commit it.<br />
+<input type="button" value="Add feed" onclick="add_feed_to_pull();"></input><input type="button" onclick="$('#accordion').accordion('activate',1);" value="Back" />
+</div>
+</div>
+</div>
+
+<script type="text/javascript">
+  $("#accordion").accordion();
+  $("#accordion").hide();
+</script>
+{% endblock %}
+
 <div id="footer">Seetho (c) semenoff.andrew 2009.</div>
 </div>
+
 </body>
 </html>
