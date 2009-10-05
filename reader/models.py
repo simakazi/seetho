@@ -9,16 +9,15 @@ class Tag(models.Model):
 	ordering=["title"]
 	db_table="tags"
 
-
 class Feed(models.Model):
-    url=models.URLField(max_length=300)
+    url=models.URLField(max_length=300,verify_exists=False)
     last_cheked=models.DateTimeField()
     title=models.CharField(max_length=100)
     subtitle=models.CharField(max_length=100)
     link=models.URLField(max_length=200)
 
     def __unicode__(self):
-	print "%s (%s)" % (url,last_cheked)
+	return "%s (%s)" % (self.url,self.last_cheked)
     
     class Meta:
 	ordering=["last_cheked"]
@@ -33,7 +32,7 @@ class Entry(models.Model):
 
     feed=models.ForeignKey(Feed)
     def __unicode__(self):
-	print title+native_id
+	return self.title
     
     class Meta:
 	ordering=["-downloaded"]
