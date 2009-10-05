@@ -72,13 +72,23 @@ class Filter(models.Model):
 
 class Group(models.Model):
     title=models.CharField(max_length=100)
-    users=models.ManyToManyField(auth.User)
+    members=models.ManyToManyField(auth.User,through='Membership')
     pulls=models.ManyToManyField(Pull)
     tags=models.ManyToManyField(Tag)
     
     class Meta:
 	ordering=["title"]
 	db_table="groups"
+
+class Membership(models.Model):
+    user=models.ForeignKey(auth.User)
+    group=models.ForeignKey(Group)
+    rights=models.CharField(max_length=1,choices=(
+    ('C','Creator'),
+    ('A','Admin'),
+    ('M','Moderator'),
+    ('R','Reader'),
+    ))
 
 class UserPull(models.Model):
     pull=models.ForeignKey(Pull)

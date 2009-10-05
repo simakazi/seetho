@@ -114,6 +114,24 @@ background-color:#5cbf45;
 margin-bottom:20px;
 }
 
+div.groupbody{
+margin-right:0px;
+border:solid 5px #5cbf45;
+padding-right:0px;
+width:90%;
+background-color:white;
+margin-bottom:20px;
+}
+
+div.grouppulls{
+width:100%;
+padding:0.5%;
+}
+
+.grouppulls div{
+width:96%;
+}
+
 .pullbody hr {
 border: dashed 1px #38a223;
 }
