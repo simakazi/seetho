@@ -1,12 +1,7 @@
+{% extends "index.html" %}
 {% load i18n %}
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
-  "http://www.w3.org/TR/html4/strict.dtd">
-<html>
-<head>
-<link type="text/css" href="css/main.css" rel="stylesheet" />
-<script type="text/javascript" src="js/jquery.js"></script> 
-<title>Sign in with your OpenID</title>
+{% block scripts %}
 <script>
 function openid_google(){
 document.getElementById("id_openid_identifier").value="https://www.google.com/accounts/o8/id";
@@ -17,6 +12,31 @@ function openid_yahoo(){
 document.getElementById("id_openid_identifier").value="http://yahoo.com/";
 document.getElementById("submitbutton").click()
 } 
+
+function openid_yandex(){
+login=prompt("Enter your yandex login:","login");
+    if (login!="" && login!=null){
+	document.getElementById("id_openid_identifier").value="http://openid.yandex.ru/"+login;
+	document.getElementById("submitbutton").click()
+    }
+} 
+
+function openid_livejournal(){
+login=prompt("Enter your livejournal username:","username");
+    if (login!="" && login!=null){
+	document.getElementById("id_openid_identifier").value="http://"+login+".livejournal.com";
+	document.getElementById("submitbutton").click()
+    }
+} 
+
+function openid_blogger(){
+login=prompt("Enter your blogger/blogspot url:","username.blogger.com");
+    if (login!="" && login!=null){
+	document.getElementById("id_openid_identifier").value=login;
+	document.getElementById("submitbutton").click()
+    }
+} 
+
 </script>  
 <style type="text/css">
 input.openid {
@@ -25,20 +45,14 @@ input.openid {
   padding-left: 16px;
 }
 </style>
-</head>
-<body>
-<div id="container">
-<div id="header">
-Seetho. News filtering, systematization and group aggregation.
-</div>
+{% endblock %}
 
-<div class="mainmenu">
+{% block mainmenu %}
 <div class="button" onclick="javascript:document.location='/'">News</div>
 <div class="button_disabled">Sign in</div>
-</div>
+{% endblock %}
 
-<div id="main">
-
+{% block main %}
 {% if form.errors %}
 <p class="errors">{% trans "Please correct errors below:" %}<br />
 	{% if form.openid_identifier.errors %} 
@@ -51,7 +65,7 @@ Seetho. News filtering, systematization and group aggregation.
 {% endif %}
 <form name="fopenid" action="{{ action }}" method="post">
 <h3>Sign in to Seetho using OpenID</h3>
-	<div style="width:400px;">
+	<div>
         <div class="form-row">
             <label for="id_openid_identifier">OpenID:</label>
             {{ form.openid_identifier }}
@@ -63,14 +77,18 @@ Seetho. News filtering, systematization and group aggregation.
 	</div>
 <br />
 <h3>Or use some OpenID providers:</h3>
-	<div class="button" onclick="javascript:openid_google()"><img src="/img/google.png" /></div>
-	<div class="button" onclick="javascript:openid_yahoo()"><img src="/img/yahoo.png" /></div>
+<div style="border-spacing:2px;">
+	<div class="buttonOpenID" onclick="javascript:openid_google()"><img src="/img/google.ico" /></div>
+	<div class="buttonOpenID" onclick="javascript:openid_yahoo()"><img src="/img/yahoo.ico" /></div>
+	<div class="buttonOpenID" onclick="javascript:openid_yandex()"><img src="/img/yandex.ico" /></div>
+	<div class="buttonOpenID" onclick="javascript:openid_livejournal()"><img src="/img/livejournal.ico" /></div>
+	<div class="buttonOpenID" onclick="javascript:openid_blogger()"><img src="/img/blogger.ico" /></div>
+
+</div>
 	{% if next %}
 	<input type="hidden" name="next" value="{{ next }}" />
 	{% endif %}
 </form>	
-</div>
-<div id="footer">Seetho (c) semenoff.andrew 2009.</div>
-</div>
-</body>
-</html>
+{% endblock %}
+{% block accordion %}
+{% endblock %}

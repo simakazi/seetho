@@ -221,6 +221,29 @@ color:#000000;
 background-color:#ffffff;
 }
 
+
+div.buttonOpenID {
+color:#000000;
+font-size:10pt;
+width:20px;
+height:20px;
+text-align:center;
+vertical-align:middle;
+display:table-cell;
+background-color:#5cbf45;
+padding-left:2px;
+padding-right:2px;
+padding-top:2px;
+padding-bottom:2px;
+}
+
+div.buttonOpenID:hover {
+cursor:pointer;
+cursor:hand;
+color:#000000;
+background-color:#ffffff;
+}
+
 div.subbutton {
 color:#000000;
 font-size:10pt;

@@ -177,7 +177,7 @@ $.ajax({
 	pull_id : $("#id_pull_id").attr("value")
 }),
     error: function(q,w){
-	alert("Check entered URL, please!");
+	alert(q.responseText);
     },
       success: function(msg){
 	 closeaccordion();

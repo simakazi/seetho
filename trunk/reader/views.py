@@ -13,8 +13,8 @@ from django.db.models import Q
 @login_required
 def add_feed(request):
     if request.method == 'POST': 
-        form = FeedForm(request.POST)
-        if form.is_valid():
+	form = FeedForm(request.POST)
+	if form.is_valid():
 	    feed_url=form.cleaned_data['feed_url']
 	    feed_cheked=form.cleaned_data['feed_cheked']
 	    filter_must=form.cleaned_data['filter_must']
@@ -52,10 +52,10 @@ def add_feed(request):
 		up.save()
             return list_pull_entries(request,pull_id)
 	else:
-	    return HttpResponseServerError("Error {" + form.errors+"}")
+	    return HttpResponseServerError("You've entered incorrect URL!")
     else:
         form = FeedForm()
-    return HttpResponseServerError("Error")
+    return HttpResponseServerError("Bad request!")
 
 def purge_group(request):
     if request.method=='POST':
