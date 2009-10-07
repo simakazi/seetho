@@ -29,13 +29,14 @@ class Entry(models.Model):
     summary=models.TextField()
     url=models.URLField(max_length=300)
     downloaded=models.DateTimeField()
+    created=models.DateTimeField()
 
     feed=models.ForeignKey(Feed)
     def __unicode__(self):
 	return self.title
     
     class Meta:
-	ordering=["-downloaded"]
+	ordering=["-created"]
 	db_table="entries"
 
 class Pull(models.Model):

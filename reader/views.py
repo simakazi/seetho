@@ -149,7 +149,7 @@ def clean_pull(request):
 	try:
 	    id=request.POST['id']
 	    PullEntry.objects.filter(pull__id=id).delete()
-	    return HttpResponse("Ok")
+	    return list_pull_entries(request,id)
 	except:
 	    return HttpResponseNotFound("")
     else:
