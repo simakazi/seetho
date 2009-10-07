@@ -124,6 +124,20 @@ background-color:white;
 margin-bottom:20px;
 }
 
+
+.dialog{
+border:solid 3px #5cbf45;
+background-color:white;
+text-align:right;
+}
+
+.errordialog{
+border:solid 3px darkred;
+background-color:white;
+text-align:center;
+}
+
+
 div.grouppulls{
 width:100%;
 padding:0.5%;
@@ -230,7 +244,8 @@ height:20px;
 text-align:center;
 vertical-align:middle;
 display:table-cell;
-background-color:#5cbf45;
+background-color:#ffffff;
+border: 3px solid white;
 padding-left:2px;
 padding-right:2px;
 padding-top:2px;
@@ -241,8 +256,14 @@ div.buttonOpenID:hover {
 cursor:pointer;
 cursor:hand;
 color:#000000;
-background-color:#ffffff;
+/*background-color:#5cbf45;
+*/
+border: 3px solid #5cbf45;
 }
+.ui-dialog-titlebar{
+display:none;
+color:red;
+} 
 
 div.subbutton {
 color:#000000;

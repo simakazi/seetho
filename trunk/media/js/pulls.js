@@ -124,7 +124,7 @@ $.ajax({
 
 function addfeed(id){
 $("#accordionform").insertAfter("#pullheader"+id);
-$("#accordion").toggle("normal");
+$("#accordion").toggle();
 $("#id_pull_id").attr("value",id);
 //$("#id_pull_title").attr("value",id);
 }
@@ -174,7 +174,14 @@ $.ajax({
 	pull_id : $("#id_pull_id").attr("value")
 }),
     error: function(q,w){
-	alert(q.responseText);
+	$("<div>"+q.responseText+"</div>").dialog({
+	    bgiframe:true,
+	    modal:true,
+	    "dialogClass":"errordialog",   
+	    
+	    minHeight:20,
+	   buttons: {"Close": function() { $(this).dialog("close"); }}
+	});
     },
       success: function(msg){
 	 closeaccordion();

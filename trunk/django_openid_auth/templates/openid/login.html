@@ -4,39 +4,118 @@
 {% block scripts %}
 <script>
 function openid_google(){
+$("*").dialog("close");
 document.getElementById("id_openid_identifier").value="https://www.google.com/accounts/o8/id";
 document.getElementById("submitbutton").click()
 }
 
 function openid_yahoo(){
+$("*").dialog("close");
 document.getElementById("id_openid_identifier").value="http://yahoo.com/";
 document.getElementById("submitbutton").click()
 } 
 
 function openid_yandex(){
-login=prompt("Enter your yandex login:","login");
-    if (login!="" && login!=null){
-	document.getElementById("id_openid_identifier").value="http://openid.yandex.ru/"+login;
-	document.getElementById("submitbutton").click()
-    }
+$("*").dialog("close");
+$("<div style='text-align:center;'>Enter your yandex login, please: <input style='width:80%;' value='login' id='dialog_yandex'></input></div>").dialog(
+    {
+    "dialogClass":"dialog",
+    "minHeight":80,
+    modal:true,
+    buttons: { "Ok": function() {$("#id_openid_identifier").attr("value","http://openid.yandex.ru/"+$("#dialog_yandex").attr("value"));$(this).dialog("close");$("#submitbutton").trigger("click");},
+	    "Cancel": function() { $(this).dialog("close"); }
+	}
+    });
 } 
 
 function openid_livejournal(){
-login=prompt("Enter your livejournal username:","username");
-    if (login!="" && login!=null){
-	document.getElementById("id_openid_identifier").value="http://"+login+".livejournal.com";
-	document.getElementById("submitbutton").click()
-    }
+$("*").dialog("close");
+$("<div style='text-align:center;'>Enter your livejournal username, please: <input style='width:80%;' value='username' id='dialog_lj'></input></div>").dialog(
+    {
+    "dialogClass":"dialog",
+    "minHeight":80,
+    modal:true,
+    buttons: { "Ok": function() {$("#id_openid_identifier").attr("value","http://"+$("#dialog_lj").attr("value")+".livejournal.com");$(this).dialog("close");$("#submitbutton").trigger("click");},
+	    "Cancel": function() { $(this).dialog("close"); }
+	}
+    });
 } 
 
 function openid_blogger(){
-login=prompt("Enter your blogger/blogspot url:","username.blogger.com");
-    if (login!="" && login!=null){
-	document.getElementById("id_openid_identifier").value=login;
-	document.getElementById("submitbutton").click()
-    }
+$("*").dialog("close");
+$("<div style='text-align:center;'>Enter your blogger/blogspot blog's url, please: <input style='width:80%;' value='username.blogger.com' id='dialog_blogger'></input></div>").dialog(
+    {
+    "dialogClass":"dialog",
+    "minHeight":80,
+    modal:true,
+    buttons: { "Ok": function() {$("#id_openid_identifier").attr("value",$("#dialog_blogger").attr("value"));$(this).dialog("close");$("#submitbutton").trigger("click");},
+	    "Cancel": function() { $(this).dialog("close"); }
+	}
+    });
 } 
 
+function openid_myspace(){
+$("*").dialog("close");
+	document.getElementById("id_openid_identifier").value="http://myspace.com";
+	document.getElementById("submitbutton").click()
+} 
+
+function openid_hyves(){
+$("*").dialog("close");
+	document.getElementById("id_openid_identifier").value="http://hyves.net";
+	document.getElementById("submitbutton").click()
+} 
+
+function openid_wordpress(){
+$("*").dialog("close");
+$("<div style='text-align:center;'>Enter your wordpress username, please: <input style='width:80%;' value='username' id='dialog_wp'></input></div>").dialog(
+    {
+    "dialogClass":"dialog",
+    "minHeight":80,
+    modal:true,
+    buttons: { "Ok": function() {$("#id_openid_identifier").attr("value","http://"+$("#dialog_wp").attr("value")+".wordpress.com");$(this).dialog("close");$("#submitbutton").trigger("click");},
+	    "Cancel": function() { $(this).dialog("close"); }
+	}
+    });
+} 
+
+function openid_flickr(){
+$("*").dialog("close");
+	document.getElementById("id_openid_identifier").value="http://flickr.com";
+	document.getElementById("submitbutton").click()
+} 
+
+function openid_aol(){
+$("*").dialog("close");
+$("<div style='text-align:center;'>Enter your aol screenname, please: <input style='width:80%;' value='screenname' id='dialog_aol'></input></div>").dialog(
+    {
+    "dialogClass":"dialog",
+    "minHeight":80,
+    modal:true,
+    buttons: { "Ok": function() {$("#id_openid_identifier").attr("value","http://openid.aol.com/"+$("#dialog_aol").attr("value"));$(this).dialog("close");$("#submitbutton").trigger("click");},
+	    "Cancel": function() { $(this).dialog("close"); }
+	}
+    });
+} 
+
+function openid_myopenid(){
+$("*").dialog("close");
+	document.getElementById("id_openid_identifier").value="http://myopenid.com";
+	document.getElementById("submitbutton").click()
+} 
+
+function openid_chimp(){
+$("*").dialog("close");
+$("<div style='text-align:center;'>Enter your chi.mp login, please: <input style='width:80%;' value='login.mp' id='dialog_chimp'></input></div>").dialog(
+    {
+    "dialogClass":"dialog",
+    "minHeight":80,
+    modal:true,
+    buttons: { "Ok": function() {$("#id_openid_identifier").attr("value",$("#dialog_chimp").attr("value"));$(this).dialog("close");$("#submitbutton").trigger("click");},
+	    "Cancel": function() { $(this).dialog("close"); }
+	}
+    });
+} 
 </script>  
 <style type="text/css">
 input.openid {
@@ -83,7 +162,13 @@ input.openid {
 	<div class="buttonOpenID" onclick="javascript:openid_yandex()"><img src="/img/yandex.ico" /></div>
 	<div class="buttonOpenID" onclick="javascript:openid_livejournal()"><img src="/img/livejournal.ico" /></div>
 	<div class="buttonOpenID" onclick="javascript:openid_blogger()"><img src="/img/blogger.ico" /></div>
-
+	<div class="buttonOpenID" onclick="javascript:openid_myspace()"><img src="/img/myspace.ico" /></div>
+	<div class="buttonOpenID" onclick="javascript:openid_wordpress()"><img src="/img/wordpress.ico" /></div>
+	<div class="buttonOpenID" onclick="javascript:openid_hyves()"><img src="/img/hyves.ico" /></div>
+	<div class="buttonOpenID" onclick="javascript:openid_flickr()"><img src="/img/flickr.ico" /></div>
+	<div class="buttonOpenID" onclick="javascript:openid_aol()"><img src="/img/aol.ico" /></div>
+	<div class="buttonOpenID" onclick="javascript:openid_myopenid()"><img src="/img/myopenid.ico" /></div>
+	<div class="buttonOpenID" onclick="javascript:openid_chimp()"><img src="/img/chimp.ico" /></div>
 </div>
 	{% if next %}
 	<input type="hidden" name="next" value="{{ next }}" />
