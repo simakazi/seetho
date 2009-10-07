@@ -90,13 +90,10 @@ $.ajax({
       type: "POST",
       data: ({id : a}),
       success: function(msg){
-	if (msg!="Ok"){
-	 alert("Something gone wrong");
-	}
-	else{
-	$('#pullbody'+a+' > .entry').remove();
-	 //$("#pullbody"+a).text("");
-	}
+	
+	
+	$("#pullbody"+a).replaceWith(msg);
+
       }
    }
 )
