@@ -95,6 +95,7 @@ def list_group(request,group_id):
 	return render_to_response("group_listing.html",{"group":g,"rights":rights})
     except:
 	return HttpResponseNotFound()
+
 def create_group(request):
     title=request.POST["title"]
     g=Group(title=title)
@@ -102,6 +103,90 @@ def create_group(request):
     m=Membership(user=request.user,group=g,rights='C')
     m.save()
     return list_group(request,g.id)
+
+
+def list_topic(request,id):
+    try:
+	topic=Topic.objects.get(id=id)
+	rights=""
+	try:
+	    rights=Membership.objects.get(group=topic.group,user=request.user).rights
+	except:
+	    rights="N"
+	return render_to_response("topic_listing.html",{'topic':topic,'rights':rights})
+    except:
+	return HttpResponseNotFound()
+
+def add_comment(request):
+    if request.method=='POST':
+	text=request.POST["text"]
+	topic=request.POST["topic"]
+	new=Comment(topic=Topic.objects.get(id=topic),text=text,author=request.user,created=datetime.now(),carma=0)
+	new.save()
+	return HttpResponse("Ok")
+    else:
+	return HttpResponseServerError("Bad request.")
+
+def list_group_user(request,group_id,user_id):
+    #try:
+    user=auth.User.objects.get(id=user_id)
+    group=Group.objects.get(id=group_id)
+    comments_count=Comment.objects.filter(topic__group=group,author=user).count()
+    topics_count=Topic.objects.filter(group=group,starter=user).count()
+    pulls_count=group.pulls.filter(userpull__user=user).count()
+    rights=""
+    try:
+	rights=Membership.objects.get(group=group,user=request.user).rights
+    except:
+	rights="N"
+    hisrights=""
+    try:
+	hisrights=Membership.objects.get(group=group,user=user).rights
+    except:
+	hisrights="N"
+    return render_to_response("group_user.html",{"user":user,"group":group,"comments":comments_count,"topics":topics_count,"pulls":pulls_count,"rights":rights,"hisrights":hisrights})
+    #except:
+    #	return HttpResponseNotFound()
+
+def start_topic(request):
+    if request.method=='POST':
+	title=request.POST["title"]
+	group_id=request.POST["group_id"]
+	new=Topic(title=title,starter=request.user,started=datetime.now(),group=Group.objects.get(id=group_id),last_post=datetime.now())
+	new.save()
+	return list_topic(request,new.id)
+    else:
+	return HttpResponseServerError("Bad request.")
+
+def list_group_pulls(request,groupid):
+    rights=""
+    try:
+	rights=Membership.objects.get(group=groupid,user=request.user).rights
+    except:
+	rights="N"
+    return render_to_response('group_pulls.html', {
+	'group':Group.objects.get(id=groupid),'rights':rights,'user':request.user
+    })
+
+def list_group_users(request,groupid):
+    rights=""
+    try:
+	rights=Membership.objects.get(group=groupid,user=request.user).rights
+    except:
+	rights="N"
+    return render_to_response('group_users.html', {
+	'group':Group.objects.get(id=groupid),'rights':rights,'user':request.user
+    })
+
+def list_group_topics(request,groupid):
+    rights=""
+    try:
+	rights=Membership.objects.get(group=groupid,user=request.user).rights
+    except:
+	rights="N"
+    return render_to_response('group_topics.html', {
+	'group':Group.objects.get(id=groupid),'rights':rights,'user':request.user
+    })
 
 def list_groups(request):
     return render_to_response("groups.html",{"groups":request.user.group_set.all(),"user":request.user})

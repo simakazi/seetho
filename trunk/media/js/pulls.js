@@ -19,7 +19,7 @@ $.ajax({
 
 function updatepull(id){
 closeaccordion();
-$('#pullbody'+id).html("Please wait...");
+$('#pullbody'+id).html("<img src='/img/loading.gif' />");
 $.ajax({
       url: "/pull/"+id,
       global: false,
@@ -84,6 +84,7 @@ $('#togglepull'+a).text('show');
 function cleanpull(a){
 closeaccordion();
 if (confirm("Are you SURE?\nThere will be no undo and all data will be lost!")){
+$('#pullbody'+a).html("<img src='/img/loading.gif' />");
 $.ajax({
       url: "/clean_pull/",
       global: false,
@@ -123,9 +124,15 @@ $.ajax({
 }
 
 function addfeed(id){
-$("#accordionform").insertAfter("#pullheader"+id);
+
+if ($("#pullbody"+id+" #accordion").attr("id")=="accordion"){
 $("#accordion").toggle();
+}
+else{
+$("#accordionform").insertAfter("#pullheader"+id);
+$("#accordion").show();
 $("#id_pull_id").attr("value",id);
+}
 //$("#id_pull_title").attr("value",id);
 }
 
@@ -175,8 +182,11 @@ $.ajax({
 }),
     error: function(q,w){
 	$("<div>"+q.responseText+"</div>").dialog({
-	    bgiframe:true,
 	    modal:true,
+	    overlay: {
+				backgroundColor: '#000',
+				opacity: 0.5
+			},
 	    "dialogClass":"errordialog",   
 	    
 	    minHeight:20,

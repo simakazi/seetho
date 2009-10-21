@@ -91,6 +91,20 @@ class Membership(models.Model):
     ('R','Reader'),
     ))
 
+class Topic(models.Model):
+    group=models.ForeignKey(Group)
+    title=models.CharField(max_length=100)
+    started=models.DateTimeField()
+    starter=models.ForeignKey(auth.User)
+    last_post=models.DateTimeField()
+
+class Comment(models.Model):
+    topic=models.ForeignKey(Topic)
+    text=models.TextField()
+    author=models.ForeignKey(auth.User)
+    created=models.DateTimeField()
+    carma=models.IntegerField()
+
 class UserPull(models.Model):
     pull=models.ForeignKey(Pull)
     user=models.ForeignKey(auth.User)
