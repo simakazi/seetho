@@ -1,8 +1,38 @@
 {% load ifpermit %}
+
 <div class="groupbody" id="groupbody{{group.id}}">
 
 <div class="pullheader" id="groupheader{{group.id}}">
-<div class="pullheadertext">{{group.title}} - {{group.members.count}} user(s) 
+<div class="pullheadertext">{{group.title}}. 
+{% ifnotequal rights "N" %}
+you're {{ rights|full_right }} of this group
+{% endifnotequal %}
+</div>
+
+<div class="smallbutton" onclick="javascript:$('.leftpart').load('/group/{{group.id}}/pulls');">pulls</div>
+<div class="smallbutton" onclick="javascript:$('.leftpart').load('/group/{{group.id}}/users');">users</div>
+<div class="smallbutton" onclick="javascript:$('.leftpart').load('/group/{{group.id}}/topics');">topics</div>
+
+{% ifequal rights "N" %}
+<div class="smallbutton" onclick="javascript:subscribe_group({{group.id}});">subscribe</div>
+{% endifequal %}
+{% ifequal rights "R" %}
+<div class="smallbutton" onclick="javascript:unsubscribe_group({{group.id}});">unsubscribe</div>
+{% endifequal %}
+
+<!--div class="smallbutton" id="togglegroup{{group.id}}" onclick="javascript:togglegroup({{group.id}});">hide</div>
+<div class="smallbutton" onclick="javascript:updategroup({{group.id}});">update</div-->
+{% ifpermit rights C %}
+<div class="smallbutton" onclick="javascript:purgegroup({{group.id}});">purge</div>
+{% endifpermit %}
+</div>
+</div>
+
+
+<!--div class="groupbody" id="groupbody{{group.id}}">
+
+<div class="pullheader" id="groupheader{{group.id}}">
+<div class="pullheadertext">{{group.title}}. 
 {% ifnotequal rights "N" %}
 you're {{ rights|full_right }} of this group
 {% endifnotequal %}
@@ -23,11 +53,18 @@ you're {{ rights|full_right }} of this group
 {% endifpermit %}
 </div>
 
-<div class="grouppulls" id="grouppulls{{group.id}}"></div>
+<div class="grouppulls" id="grouppulls{{group.id}}">
+<b><a href="/group/{{group.id}}/pulls">Pulls:</b> {{group.pulls.count}}</a><br />
+<b><a href="/group/{{group.id}}/users">Users:</b> {{group.members.count}}</a><br />
+<b><a href="/group/{{group.id}}/topics">Topics:</b> {{group.topic_set.count}}</a>
+</div>
 
 </div>
+
+<!--
 {% for p in group.pulls.all %}
 <script>
+$("#tabs").tabs();
 $.ajax({
       url: "/pull/"+{{p.id}},
       global: false,
@@ -45,3 +82,4 @@ $.ajax({
 )
 </script>
 {% endfor %}
+-->

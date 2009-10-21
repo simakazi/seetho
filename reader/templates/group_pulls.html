@@ -1,0 +1,55 @@
+{% load ifpermit %}
+
+<div class="groupbody" id="groupbody{{group.id}}">
+
+<div class="pullheader" id="groupheader{{group.id}}">
+<div class="pullheadertext">{{group.title}}. 
+{% ifnotequal rights "N" %}
+you're {{ rights|full_right }} of this group
+{% endifnotequal %}
+</div>
+
+{% ifpermit rights A %}
+<div class="smallbutton" onclick="javascript:addpull({{group.id}});">new pull</div>
+{% endifpermit %}
+<div class="smallbutton" onclick="javascript:$('.leftpart').load('/group/{{group.id}}/pulls');">pulls</div>
+<div class="smallbutton" onclick="javascript:$('.leftpart').load('/group/{{group.id}}/users');">users</div>
+<div class="smallbutton" onclick="javascript:$('.leftpart').load('/group/{{group.id}}/topics');">topics</div>
+{% ifequal rights "N" %}
+<div class="smallbutton" onclick="javascript:subscribe_group({{group.id}});">subscribe</div>
+{% endifequal %}
+{% ifequal rights "R" %}
+<div class="smallbutton" onclick="javascript:unsubscribe_group({{group.id}});">unsubscribe</div>
+{% endifequal %}
+{% ifpermit rights C %}
+<div class="smallbutton" onclick="javascript:purgegroup({{group.id}});">purge</div>
+{% endifpermit %}
+</div>
+
+
+<div class="grouppulls" id="grouppulls{{group.id}}">
+</div>
+
+</div>
+
+<script>
+{% for p in group.pulls.all %}
+$.ajax({
+      url: "/pull/"+{{p.id}},
+      global: false,
+      type: "POST",
+      data: ({}),
+      success: function(msg){
+	if (msg!="None"){
+	    $('#grouppulls'+{{group.id}}).append(msg);
+	    //$('#pullbody'+{{p.id}}).css("width","95%").css("margin-left","5px").css("margin-right","5px");
+	}
+	else{
+	}
+      }
+   }
+)
+{% empty %}
+$('#grouppulls'+{{group.id}}).html("No pulls")
+{% endfor %}
+</script>

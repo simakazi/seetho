@@ -11,6 +11,8 @@ $.ajax({
 	 alert("Something gone wrong!"); 
 	}
 	else{
+	    if ($('#grouppulls'+id).html()=="No pulls")
+		$('#grouppulls'+id).html("");
 	 $('#groupbody'+id).append(msg);
 	//id=$("#groupbody"+id+" > .pullbody:last").attr("id").substring(8);
 	//$("#createpull").before('<div id="openpull'+id+'" class="rightmenu" onclick="javascript:openpull('+id+');">'+$('.pullheadertext:first').text()+'</div>');
@@ -24,7 +26,7 @@ $.ajax({
 
 function updategroup(id){
 //closeaccordion();
-$('#groupbody'+id).html("Please wait...");
+$('#groupbody'+id).html("<img src='/img/loading.gif' />");
 $.ajax({
       url: "/group/"+id,
       global: false,
