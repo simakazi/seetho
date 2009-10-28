@@ -298,6 +298,7 @@ font-size:8pt;
 
 div.leftpart {
 width: 70%;
+min-width:600px;
 float:left;
 }
 div.rightpart {

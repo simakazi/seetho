@@ -23,9 +23,23 @@ you're {{ rights|full_right }} of this group
 </div>
 
 <div class="grouppulls" id="grouppulls{{group.id}}">
-<h1>{{user}} ({{user.first_name}} {{user.last_name}}) - {{ hisrights|full_right}} of this group</h1>
-<a href="">Grant moderator rights</a><br />
-<a href="">Grant administrator rights</a>
+<h1><a href="/profile/{{user.id}}">{{user}}</a> ({{user.first_name}} {{user.last_name}}) - {{ hisrights|full_right}} of this group</h1>
+{% ifpermit rights M %}
+
+{% ifnotequal hisrights "C" %}
+{% ifpermit hisrights A %}
+<a href="about:none" onclick="javascript:$('.leftpart').load('/group/{{group.id}}/user/{{user.id}}/R');">Remove administrator rights</a><br />
+{% else %}
+{% ifpermit hisrights M %}
+<a href="about:none" onclick="javascript:$('.leftpart').load('/group/{{group.id}}/user/{{user.id}}/R');">Remove moderator rights</a><br />
+{% else %}
+<a href="about:none" onclick="javascript:$('.leftpart').load('/group/{{group.id}}/user/{{user.id}}/M');">Grant moderator rights</a><br />
+{% endifpermit %}
+<a href="about:none" onclick="javascript:$('.leftpart').load('/group/{{group.id}}/user/{{user.id}}/A');">Grant administrator rights</a><br />
+{% endifpermit %}
+{% endifnotequal %}
+
+{% endifpermit %}
 <h2>His/her activity:</h2> 
 <b>Pulls</b>: {{pulls}}<br />
 <b>Topics</b>: {{topics}}<br />
