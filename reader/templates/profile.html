@@ -1,0 +1,46 @@
+{% extends "index.html" %}
+
+{% block mainmenu %}
+<div class="button" onclick="javascript:document.location='/'">News</div>
+<div class="button" onclick="javascript:document.location='/pulls'">Pulls</div>
+<div class="button" onclick="javascript:document.location='/groups'">Groups</div>
+<div class="button" onclick="javascript:document.location='/search'">Search</div>
+<div class="button_disabled">Profile</div>
+<div class="button" onclick="javascript:document.location='/logout'">Logout</div>
+{% endblock %}
+
+{% block main %}
+<h1>{{victim}} profile</h1>
+<div>
+{% ifequal user.id victim.id %}
+<form action="/save_profile/" method="post">
+<div class="form-row">
+<label for="id_username">Username:</label> <input id="id_username" name="id_username" value="{{victim.username}}"/>
+</div>
+<div class="form-row">
+<label for="id_first_name">First name:</label> <input id="id_first_name" name="id_first_name" value="{{victim.first_name}}"/>
+</div>
+<div class="form-row">
+<label for="id_last_name">Last name:</label> <input id="id_last_name" name="id_last_name" value="{{victim.last_name}}"/>
+</div>
+<input type="submit"></input>
+</form>
+<h3>Messages:</h3>
+{% for m in messages %}
+<div>
+<b>{{m.title}}</b><br />
+<i>{{m.from}} {{m.when}}</i><br />
+{{m.text}}
+</div>
+<hr />
+{% endfor %}
+{% else %}
+First name: {{victim.first_name}}<br />
+Last name: {{victim.last_name}}<br />
+<a href="about:none">Send a message</a>
+{% endifequal %}
+</div>
+{% endblock %}
+
+{% block accordion %}
+{% endblock %}

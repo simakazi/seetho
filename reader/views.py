@@ -57,6 +57,7 @@ def add_feed(request):
         form = FeedForm()
     return HttpResponseServerError("Bad request!")
 
+@login_required
 def purge_group(request):
     if request.method=='POST':
 	try:
@@ -68,6 +69,7 @@ def purge_group(request):
     else:
 	return HttpResponseServerError("Bad request.")
 
+@login_required
 def unsubscribe_group(request,group_id):
     try:
 	g=Group.objects.get(id=group_id)
@@ -75,6 +77,8 @@ def unsubscribe_group(request,group_id):
 	return list_group(request,group_id)
     except:
 	return HttpResponseNotFound()
+
+@login_required
 def subscribe_group(request,group_id):
     try:
 	g=Group.objects.get(id=group_id)
@@ -84,6 +88,7 @@ def subscribe_group(request,group_id):
     except:
 	return HttpResponseNotFound()
 
+@login_required
 def list_group(request,group_id):
     try:
 	g=Group.objects.get(id=group_id)
@@ -96,6 +101,7 @@ def list_group(request,group_id):
     except:
 	return HttpResponseNotFound()
 
+@login_required
 def create_group(request):
     title=request.POST["title"]
     g=Group(title=title)
@@ -104,7 +110,7 @@ def create_group(request):
     m.save()
     return list_group(request,g.id)
 
-
+@login_required
 def list_topic(request,id):
     try:
 	topic=Topic.objects.get(id=id)
@@ -117,6 +123,7 @@ def list_topic(request,id):
     except:
 	return HttpResponseNotFound()
 
+@login_required
 def add_comment(request):
     if request.method=='POST':
 	text=request.POST["text"]
@@ -127,6 +134,33 @@ def add_comment(request):
     else:
 	return HttpResponseServerError("Bad request.")
 
+@login_required
+def my_profile(request):
+    return render_to_response("profile.html",{"victim":request.user,"user":request.user})
+
+@login_required
+def save_profile(request):
+    if request.method=='POST':
+	login=request.POST["id_username"]
+	first=request.POST["id_first_name"]
+	last=request.POST["id_last_name"]
+	user=auth.User.objects.get(id=request.user.id)
+	user.first_name=first
+	user.last_name=last
+	user.username=login
+	user.save()
+	return HttpResponseRedirect("/profile")
+
+@login_required
+def user_profile(request,user_id):
+    user=0
+    try:
+	user=auth.User.objects.get(id=user_id)
+    except:
+	return HttpResponseNotFound("No such user")
+    return render_to_response("profile.html",{"victim":user,"user":request.user})
+    
+@login_required
 def list_group_user(request,group_id,user_id):
     #try:
     user=auth.User.objects.get(id=user_id)
@@ -148,6 +182,31 @@ def list_group_user(request,group_id,user_id):
     #except:
     #	return HttpResponseNotFound()
 
+@login_required
+def grant_group_user_rights(request,group_id,user_id,new_rights):
+    #try:
+    user=auth.User.objects.get(id=user_id)
+    group=Group.objects.get(id=group_id)
+    rights=""
+    try:
+	rights=Membership.objects.get(group=group,user=request.user).rights
+    except:
+	rights="N"
+    his_rights=""
+    M=0
+    try:
+	M=Membership.objects.get(group=group,user=user)
+	his_rights=M.rights
+    except:
+	his_rights="N"
+    if ( rights=='C' or (rights=='A' and (new_rights=='M' or (his_rights=='M' and new_rights=='R')))):
+	M.rights=new_rights
+	M.save()	
+    return list_group_user(request,group_id,user_id)
+    #except:
+    #	return HttpResponseNotFound()
+
+@login_required
 def start_topic(request):
     if request.method=='POST':
 	title=request.POST["title"]
@@ -158,6 +217,7 @@ def start_topic(request):
     else:
 	return HttpResponseServerError("Bad request.")
 
+@login_required
 def list_group_pulls(request,groupid):
     rights=""
     try:
@@ -168,6 +228,7 @@ def list_group_pulls(request,groupid):
 	'group':Group.objects.get(id=groupid),'rights':rights,'user':request.user
     })
 
+@login_required
 def list_group_users(request,groupid):
     rights=""
     try:
@@ -178,6 +239,7 @@ def list_group_users(request,groupid):
 	'group':Group.objects.get(id=groupid),'rights':rights,'user':request.user
     })
 
+@login_required
 def list_group_topics(request,groupid):
     rights=""
     try:
@@ -188,9 +250,11 @@ def list_group_topics(request,groupid):
 	'group':Group.objects.get(id=groupid),'rights':rights,'user':request.user
     })
 
+@login_required
 def list_groups(request):
     return render_to_response("groups.html",{"groups":request.user.group_set.all(),"user":request.user})
 
+@login_required
 def search(request,find_what):
     if find_what=="":
 	return render_to_response("search.html",{})
@@ -203,6 +267,7 @@ def search(request,find_what):
 	}
 	)
 
+@login_required
 def find_feed(request):
     if request.method=='GET':
 	url=request.GET["url"]
@@ -211,6 +276,7 @@ def find_feed(request):
     else:
 	return HttpResponseServerError("Bad request.")
 
+@login_required
 def suggest_feed(request):
     if request.method=='POST':
 	control_id=request.POST['control_id']
@@ -228,7 +294,7 @@ def index(request):
 	    'user':request.user
 	})
 
-
+@login_required
 def clean_pull(request):
     if request.method=='POST':
 	try:
@@ -240,6 +306,7 @@ def clean_pull(request):
     else:
 	return HttpResponseServerError("Bad request.")
 
+@login_required
 def purge_pull(request):
     if request.method=='POST':
 	try:
@@ -251,6 +318,7 @@ def purge_pull(request):
     else:
 	return HttpResponseServerError("Bad request.")
 
+@login_required
 def create_pull(request):
     if request.method=='POST':
 	title=request.POST['title']
@@ -301,6 +369,7 @@ def list_pull_entries(request,pull_id):
     except:
 	return HttpResponseNotFound("")
 
+@login_required
 def list_pulls(request):
     P=Pull.objects.filter(Q(userpull__user=request.user)|Q(group__members=request.user))
     for p in P:
