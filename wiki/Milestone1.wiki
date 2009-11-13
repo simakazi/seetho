@@ -5,6 +5,6 @@
  * Aggregation _done_
  * Stupid filters _done_
  * OpenID-authorization _done_
- * Feeds and Pulls management _particaly_
- * Groups _in progress_
+ * Feeds and Pulls management _done_
+ * Groups _done_
  * Backend _done_
