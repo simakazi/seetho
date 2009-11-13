@@ -1,5 +1,7 @@
-#summary Milestone 2
+#summary Milestone #2. 11.09 - now
 #labels Phase-Design,milestone
+
+= Milestone #2 =
 
   * rss-out streams
   * suggestions
