@@ -57,6 +57,13 @@ def add_feed(request):
         form = FeedForm()
     return HttpResponseServerError("Bad request!")
 
+def list_entry(request,entry_id):
+  try:
+    entry=Entry.objects.get(id=entry_id)
+    return render_to_response("simple_entry.html",{"entry":entry,"user":request.user})
+  except:
+    return HttpResponseNotFound("No such entry!")
+
 @login_required
 def purge_group(request):
     if request.method=='POST':

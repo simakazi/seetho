@@ -13,7 +13,7 @@
 {% for e in pull.pullentry_set.all %}
 {% with e.entry as entry %}
 <div class="entry">
-<div style="display:table-cell;width:100%;"><h3>{{ entry.title }}</h3></div>
+<div style="display:table-cell;width:100%;padding-bottom:3px;"><a href="javascript:tweetentry('{{entry.url}}')"><img src="/img/twitter.ico" alt="Tweet this!" title="Tweet this!" align="left" style="padding-right:10px;border:0;"></img></a><h3><a href="/entry/{{ entry.id }}">{{ entry.title }}</a></h3></div>
 <div class="timestamp" style="display:table-cell;white-space: nowrap;">{{entry.created}}</div>
 <div class="undercomment"><a href="{{entry.url}}">{{entry.url}}</a></div>
 {% autoescape off %}

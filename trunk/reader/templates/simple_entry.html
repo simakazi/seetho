@@ -1,0 +1,30 @@
+{% extends "index.html" %}
+
+{% block mainmenu %}
+<div class="button" onclick="javascript:document.location='/'">News</div>
+{% if user.is_authenticated %}
+<div class="button" onclick="javascript:document.location='/pulls'">Pulls</div>
+<div class="button" onclick="javascript:document.location='/groups'">Groups</div>
+<div class="button" onclick="javascript:document.location='/search'">Search</div>
+<div class="button" onclick="javascript:document.location='/profile'">Profile</div>
+<div class="button" onclick="javascript:document.location='/logout'">Logout</div>
+{% else %}
+<div class="button" onclick="javascript:document.location='/openid/login'">Sign in</div>
+{% endif %}
+{% endblock %}
+
+{% block main %}
+<div style="width:50%">
+<div class="entry">
+<div style="display:table-cell;width:100%;padding-bottom:3px;"><a href="javascript:tweetentry('{{entry.url}}')"><img src="/img/twitter.ico" alt="Tweet this!" title="Tweet this!" align="left" style="padding-right:10px;border:0;"></img></a><h3><a href="/entry/{{ entry.id }}">{{ entry.title }}</a></h3></div>
+<div class="timestamp" style="display:table-cell;white-space: nowrap;">{{entry.created}}</div>
+<div class="undercomment"><a href="{{entry.url}}">{{entry.url}}</a></div>
+{% autoescape off %}
+{{entry.summary}}
+{% endautoescape %}
+</div>
+</div>
+{% endblock %}
+
+{% block accordion %}
+{% endblock %}
