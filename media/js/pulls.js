@@ -1,8 +1,9 @@
-function tweetentry(text){
-$("#main").append("<iframe width='0' height='0' frameborder='0' style='display:none' id='upyachka'></iframe>");
-$("#upyachka").html("<form id='callme' action='http://twitter.com/statuses/update.json' method='post'><input name='status'' value='"+text+"'><input type='submit'></input></form>");
+function tweetentry(text,id){
+$("#upyachka").remove();
+$("#main").append("<iframe width='0' height='0' frameborder='0' style='display:none' id='upyachka' name='upyachka'></iframe>");
+$("#upyachka").append("<form id='callme' target='upyachka' action='http://twitter.com/statuses/update.xml' method='post'><input name='status'' value='"+text+"'><input type='submit'></input></form>");
 $("#callme").trigger("submit");
-$("body").remove("#upyachka");
+$("#tweet"+id).replaceWith("<i>tweeted</i>");
 /*$.post("http://twitter.com/statuses/update.json", { status: text },
   function(data){
     alert("Data Loaded: " + data);
