@@ -3,6 +3,7 @@
 
 = Milestone #2 =
 
+  * twitter integration _done_
   * rss-out streams
   * suggestions
   * tags
