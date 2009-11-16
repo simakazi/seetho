@@ -1,0 +1,17 @@
+{% for e in entries %}
+{% with e.entry as entry %}
+<div class="entry">
+<div style="display:table-cell;width:100%;padding-bottom:3px;"><a href="javascript:tweetentry('{{entry.url}} {{entry.title}}',{{entry.id}})" name="tweet{{entry.id}}" ><img src="/img/twitter.ico" alt="Tweet this!" title="Tweet this!" align="left" style="padding-right:10px;border:0;"></img></a><h3><a href="/entry/{{ entry.id }}">{{ entry.title }}</a></h3></div>
+<div class="timestamp" style="display:table-cell;white-space: nowrap;">{{entry.created}}</div>
+<div class="undercomment"><a href="{{entry.url}}">{{entry.url}}</a></div>
+{% autoescape off %}
+{{entry.summary}}
+{% endautoescape %}
+</div>
+{% endwith %}
+{% endfor %}
+{% if more %}
+<div class="entry" name="more{{folder.id}}" >
+<a href="about:none" onclick="javascript:more_folder({{folder.id}},{{more}});">MORE</a>
+</div>
+{% endif %}

@@ -20,8 +20,8 @@ def add_feed(request):
 	    filter_must=form.cleaned_data['filter_must']
 	    filter_may=form.cleaned_data['filter_may']
 	    filter_not=form.cleaned_data['filter_not']
-	    pull_title=form.cleaned_data['pull_title']
-	    pull_id=form.cleaned_data['pull_id']
+	    folder_title=form.cleaned_data['folder_title']
+	    folder_id=form.cleaned_data['folder_id']
 	    print filter_must,filter_may,filter_not
 	    #if not feed_cheked:
 	    #	feed_url=feedfinder.feed(feed_url)
@@ -32,14 +32,14 @@ def add_feed(request):
 	    else:
 		feed=feed[0]
 	    
-	    pull=0
-	    if (pull_id!=-1):
-		pull=Pull.objects.get(id=pull_id)
+	    folder=0
+	    if (folder_id!=-1):
+		folder=Folder.objects.get(id=folder_id)
 	    else:
-		pull=Pull(title=pull_title)
-		pull.save()
-	    print pull,pull.id,pull.title
-	    pair=FeedFilterPair(pull=pull,feed=feed,user=request.user,last_cheked="2009-01-01 00:00",title="")
+		folder=Folder(title=folder_title)
+		folder.save()
+	    print folder,folder.id,folder.title
+	    pair=FeedFilterPair(folder=folder,feed=feed,user=request.user,last_cheked="2009-01-01 00:00",title="")
 	    pair.save()
 	    
 	    for q in [(1,filter_must),(2,filter_may),(3,filter_not)]:
@@ -47,10 +47,10 @@ def add_feed(request):
 		    if w!="":
 			filter1=Filter(type=q[0],value=w,pair=pair)
 			filter1.save()
-	    if pull_id==-1:
-		up=UserPull(user=request.user,pull=pull)
+	    if folder_id==-1:
+		up=UserFolder(user=request.user,folder=folder)
 		up.save()
-            return list_pull_entries(request,pull_id)
+            return list_folder_entries(request,folder_id)
 	else:
 	    return HttpResponseServerError("You've entered incorrect URL!")
     else:
@@ -174,7 +174,7 @@ def list_group_user(request,group_id,user_id):
     group=Group.objects.get(id=group_id)
     comments_count=Comment.objects.filter(topic__group=group,author=user).count()
     topics_count=Topic.objects.filter(group=group,starter=user).count()
-    pulls_count=group.pulls.filter(userpull__user=user).count()
+    folders_count=group.folders.filter(userfolder__user=user).count()
     rights=""
     try:
 	rights=Membership.objects.get(group=group,user=request.user).rights
@@ -185,7 +185,7 @@ def list_group_user(request,group_id,user_id):
 	hisrights=Membership.objects.get(group=group,user=user).rights
     except:
 	hisrights="N"
-    return render_to_response("group_user.html",{"user":user,"group":group,"comments":comments_count,"topics":topics_count,"pulls":pulls_count,"rights":rights,"hisrights":hisrights})
+    return render_to_response("group_user.html",{"user":user,"group":group,"comments":comments_count,"topics":topics_count,"folders":folders_count,"rights":rights,"hisrights":hisrights})
     #except:
     #	return HttpResponseNotFound()
 
@@ -225,13 +225,13 @@ def start_topic(request):
 	return HttpResponseServerError("Bad request.")
 
 @login_required
-def list_group_pulls(request,groupid):
+def list_group_folders(request,groupid):
     rights=""
     try:
 	rights=Membership.objects.get(group=groupid,user=request.user).rights
     except:
 	rights="N"
-    return render_to_response('group_pulls.html', {
+    return render_to_response('group_folders.html', {
 	'group':Group.objects.get(id=groupid),'rights':rights,'user':request.user
     })
 
@@ -270,7 +270,7 @@ def search(request,find_what):
 	{
 	    "find_what":find_what,
 	    "groups":Group.objects.filter(title__contains=find_what),
-	    "pulls":Pull.objects.filter(title__contains=find_what)
+	    "folders":Folder.objects.filter(title__contains=find_what)
 	}
 	)
 
@@ -302,23 +302,23 @@ def index(request):
 	})
 
 @login_required
-def clean_pull(request):
+def clean_folder(request):
     if request.method=='POST':
 	try:
 	    id=request.POST['id']
-	    PullEntry.objects.filter(pull__id=id).delete()
-	    return list_pull_entries(request,id)
+	    FolderEntry.objects.filter(folder__id=id).delete()
+	    return list_folder_entries(request,id)
 	except:
 	    return HttpResponseNotFound("")
     else:
 	return HttpResponseServerError("Bad request.")
 
 @login_required
-def purge_pull(request):
+def purge_folder(request):
     if request.method=='POST':
 	try:
 	    id=request.POST['id']
-	    Pull.objects.filter(id=id).delete()
+	    Folder.objects.filter(id=id).delete()
 	    return HttpResponse("Ok")
 	except:
 	    return HttpResponseNotFound("")
@@ -326,28 +326,28 @@ def purge_pull(request):
 	return HttpResponseServerError("Bad request.")
 
 @login_required
-def create_pull(request):
+def create_folder(request):
     if request.method=='POST':
 	title=request.POST['title']
-	p=Pull(title=title)
+	p=Folder(title=title)
 	p.save()
 	group_id=-1
 	try:
 	    group_id=request.POST["group_id"]
 	    group=Group.objects.get(id=group_id)
-	    group.pulls.add(p)
+	    group.folders.add(p)
 	    group.save
 	except:
 	    pass
-	up=UserPull(user=request.user,pull=p)
+	up=UserFolder(user=request.user,folder=p)
 	up.save()
-	return list_pull_entries(request,p.id)
+	return list_folder_entries(request,p.id)
     else:
 	return HttpResponseServerError("Bad request.")
 
-def full_pull(p):
-    for q in FeedFilterPair.objects.filter(pull=p):
-	for e in Entry.objects.filter(feed=q.feed,downloaded__gt=q.last_cheked).exclude(pullentry__pull=p):
+def full_folder(p):
+    for q in FeedFilterPair.objects.filter(folder=p):
+	for e in Entry.objects.filter(feed=q.feed,downloaded__gt=q.last_cheked).exclude(folderentry__folder=p):
 	    flag1=True
 	    flag2=False
 	    flag2on=False
@@ -363,26 +363,33 @@ def full_pull(p):
 		elif (f.type==3 and e.summary.count(f.value)!=0):
 		    flag3=False
 	    if (flag3 and flag1 and (flag2 or (flag2==flag2on))):
-		ep=PullEntry(pull=p,entry=e)
+		ep=FolderEntry(folder=p,entry=e)
 		ep.save()
 	q.last_cheked=datetime.now()
 	q.save()
 
-def list_pull_entries(request,pull_id):
+def list_folder_entries(request,folder_id):
     try:
-	p=Pull.objects.get(id=pull_id)
-	full_pull(p)
-	return render_to_response("pull_listing.html",{'pull':p})
+      p=Folder.objects.get(id=folder_id)
+      full_folder(p)
+      e=p.folderentry_set.all()[0:20]
+      return render_to_response("folder_listing.html",{'folder':p,'entries':e,'more':(e.count()<p.folderentry_set.count())*20})
     except:
-	return HttpResponseNotFound("")
+      return HttpResponseNotFound("")
+
+def more_folder_entries(request,folder_id,next):
+    next=int(next)
+    p=Folder.objects.get(id=folder_id)
+    e=p.folderentry_set.all()[next:next+20]
+    return render_to_response("one_entry.html",{'folder':p,'entries':e,'more':(next+e.count()<p.folderentry_set.count())*(next+20)})
 
 @login_required
-def list_pulls(request):
-    P=Pull.objects.filter(Q(userpull__user=request.user)|Q(group__members=request.user))
+def list_folders(request):
+    P=Folder.objects.filter(Q(userfolder__user=request.user)|Q(group__members=request.user))
     for p in P:
-	full_pull(p)
-    return render_to_response('pulls.html', {
-	'feedform':FeedForm(),'pulls':P,'user':request.user
+	full_folder(p)
+    return render_to_response('folders.html', {
+	'feedform':FeedForm(),'folders':P,'user':request.user
     })
 
 

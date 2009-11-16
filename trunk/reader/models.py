@@ -39,15 +39,15 @@ class Entry(models.Model):
 	ordering=["-created"]
 	db_table="entries"
 
-class Pull(models.Model):
+class Folder(models.Model):
     title=models.CharField(max_length=100)
     tags=models.ManyToManyField(Tag)
     
     class Meta:
-	db_table="pulls"
+	db_table="folders"
 
-class PullEntry(models.Model):
-    pull=models.ForeignKey(Pull)
+class FolderEntry(models.Model):
+    folder=models.ForeignKey(Folder)
     entry=models.ForeignKey(Entry)
 
     class Meta:
@@ -58,7 +58,7 @@ class FeedFilterPair(models.Model):
     feed=models.ForeignKey(Feed)
     user=models.ForeignKey(auth.User)
     last_cheked=models.DateTimeField()
-    pull=models.ForeignKey(Pull)    
+    folder=models.ForeignKey(Folder)    
 
     class Meta:
 	db_table="pairs"
@@ -74,7 +74,7 @@ class Filter(models.Model):
 class Group(models.Model):
     title=models.CharField(max_length=100)
     members=models.ManyToManyField(auth.User,through='Membership')
-    pulls=models.ManyToManyField(Pull)
+    folders=models.ManyToManyField(Folder)
     tags=models.ManyToManyField(Tag)
     
     class Meta:
@@ -105,8 +105,8 @@ class Comment(models.Model):
     created=models.DateTimeField()
     carma=models.IntegerField()
 
-class UserPull(models.Model):
-    pull=models.ForeignKey(Pull)
+class UserFolder(models.Model):
+    folder=models.ForeignKey(Folder)
     user=models.ForeignKey(auth.User)
 
 class News(models.Model):

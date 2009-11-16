@@ -1,7 +1,7 @@
 {% extends "index.html" %}
 {% block mainmenu %}
 <div class="button" onclick="javascript:document.location='/'">News</div>
-<div class="button" onclick="javascript:document.location='/pulls'">Pulls</div>
+<div class="button" onclick="javascript:document.location='/folders'">Folders</div>
 <div class="button" onclick="javascript:document.location='/groups'">Groups</div>
 <div class="button_disabled">Search</div>
 <div class="button" onclick="javascript:document.location='/profile'">Profile</div>
@@ -14,7 +14,7 @@
 <div name="results" id="results">
 {% if find_what %}
 You've searched for {{find_what}}.<br />
-Found {{groups.count}} groups and {{pulls.count}} pulls.
+Found {{groups.count}} groups and {{folders.count}} folders.
 {% endif %}
 </div>
 
@@ -35,10 +35,10 @@ $.ajax({
 </script>
 {% endfor %}
 
-{% for p in pulls %}
+{% for p in folders %}
 <script>
 $.ajax({
-      url: "/pull/"+{{p.id}},
+      url: "/folder/"+{{p.id}},
       global: false,
       type: "POST",
       data: ({}),

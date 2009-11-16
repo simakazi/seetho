@@ -1,0 +1,30 @@
+
+<div class="folderbody" id="folderbody{{folder.id}}">
+
+<div class="folderheader" id="folderheader{{folder.id}}">
+<div class="folderheadertext">{{folder.title}} - {{folder.folderentry_set.count}} entries</div>
+<div class="smallbutton" onclick="javascript:addfeed({{folder.id}});">add feed</div>
+<div class="smallbutton" id="togglefolder{{folder.id}}" onclick="javascript:togglefolder({{folder.id}});">hide</div>
+<div class="smallbutton" onclick="javascript:updatefolder({{folder.id}});">update</div>
+<div class="smallbutton" onclick="javascript:cleanfolder({{folder.id}});">clean</div>
+<div class="smallbutton" onclick="javascript:purgefolder({{folder.id}});">purge</div>
+</div>
+
+{% for e in entries %}
+{% with e.entry as entry %}
+<div class="entry">
+<div style="display:table-cell;width:100%;padding-bottom:3px;"><a href="javascript:tweetentry('{{entry.url}} {{entry.title}}',{{entry.id}})" name="tweet{{entry.id}}" ><img src="/img/twitter.ico" alt="Tweet this!" title="Tweet this!" align="left" style="padding-right:10px;border:0;"></img></a><h3><a href="/entry/{{ entry.id }}">{{ entry.title }}</a></h3></div>
+<div class="timestamp" style="display:table-cell;white-space: nowrap;">{{entry.created}}</div>
+<div class="undercomment"><a href="{{entry.url}}">{{entry.url}}</a></div>
+{% autoescape off %}
+{{entry.summary}}
+{% endautoescape %}
+</div>
+{% endwith %}
+{% endfor %}
+{% if more %}
+<div class="entry" name="more{{folder.id}}" >
+<a href="about:none" onclick="javascript:more_folder({{folder.id}},{{more}});">MORE</a>
+</div>
+{% endif %}
+</div>
