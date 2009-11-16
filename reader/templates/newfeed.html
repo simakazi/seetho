@@ -73,15 +73,15 @@ News contain <u>some</u> words:<input id="id_filter_may" name="filter_may"/><br 
 News <u>don't</u> contain <u>any</u> word:<input id="id_filter_not" name="filter_not"/><br />
 <input type="button" onclick="$('#accordion').accordion('activate',2);" value="Next" /><input type="button" onclick="$('#accordion').accordion('activate',0);" value="Back" />
 </div>
-<h3><a href="#">Step №3. Select pull for collected news</a></h3>
+<h3><a href="#">Step №3. Select folder for collected news</a></h3>
 <div>
-Select or create new pull:<br />
-<input id="id_pull_title" name="pull_title" value="Add new pull"/>
-<input type="hidden" id="id_pull_id" name="pull_id" value="-1"/>
+Select or create new folder:<br />
+<input id="id_folder_title" name="folder_title" value="Add new folder"/>
+<input type="hidden" id="id_folder_id" name="folder_id" value="-1"/>
 <br />
-<select style="width: 90%" id="pull_exist" onchange="$('#id_pull_title').attr('value',$('#pull_exist :selected').text());$('#id_pull_id').attr('value',$(this).val());">
-<option value="-1" selected="true">Add new pull</option>
-{% for p in pulls %}
+<select style="width: 90%" id="folder_exist" onchange="$('#id_folder_title').attr('value',$('#folder_exist :selected').text());$('#id_folder_id').attr('value',$(this).val());">
+<option value="-1" selected="true">Add new folder</option>
+{% for p in folders %}
 <option value="{{ p.id }}">{{ p.title }}</option>
 {% endfor %}
 </select><br />

@@ -2,13 +2,13 @@
 
 <div class="groupbody" id="groupbody{{group.id}}">
 
-<div class="pullheader" id="groupheader{{group.id}}">
-<div class="pullheadertext">{{group.title}}. 
+<div class="folderheader" id="groupheader{{group.id}}">
+<div class="folderheadertext">{{group.title}}. 
 {% ifnotequal rights "N" %}
 you're {{ rights|full_right }} of this group
 {% endifnotequal %}
 </div>
-<div class="smallbutton" onclick="javascript:$('.leftpart').load('/group/{{group.id}}/pulls');">pulls</div>
+<div class="smallbutton" onclick="javascript:$('.leftpart').load('/group/{{group.id}}/folders');">folders</div>
 <div class="smallbutton" onclick="javascript:$('.leftpart').load('/group/{{group.id}}/users');">users</div>
 <div class="smallbutton" onclick="javascript:$('.leftpart').load('/group/{{group.id}}/topics');">topics</div>
 {% ifequal rights "N" %}
@@ -22,7 +22,7 @@ you're {{ rights|full_right }} of this group
 {% endifpermit %}
 </div>
 
-<div class="grouppulls" id="grouppulls{{group.id}}">
+<div class="groupfolders" id="groupfolders{{group.id}}">
 <h1><a href="/profile/{{user.id}}">{{user}}</a> ({{user.first_name}} {{user.last_name}}) - {{ hisrights|full_right}} of this group</h1>
 {% ifpermit rights M %}
 
@@ -41,7 +41,7 @@ you're {{ rights|full_right }} of this group
 
 {% endifpermit %}
 <h2>His/her activity:</h2> 
-<b>Pulls</b>: {{pulls}}<br />
+<b>Folders</b>: {{folders}}<br />
 <b>Topics</b>: {{topics}}<br />
 <b>Comments</b>: {{comments}}<br />
 </div>

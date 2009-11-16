@@ -8,6 +8,10 @@
 you're {{ rights|full_right }} of this group
 {% endifnotequal %}
 </div>
+
+{% ifpermit rights A %}
+<div class="smallbutton" onclick="javascript:addfolder({{group.id}});">new folder</div>
+{% endifpermit %}
 <div class="smallbutton" onclick="javascript:$('.leftpart').load('/group/{{group.id}}/folders');">folders</div>
 <div class="smallbutton" onclick="javascript:$('.leftpart').load('/group/{{group.id}}/users');">users</div>
 <div class="smallbutton" onclick="javascript:$('.leftpart').load('/group/{{group.id}}/topics');">topics</div>
@@ -22,10 +26,30 @@ you're {{ rights|full_right }} of this group
 {% endifpermit %}
 </div>
 
+
 <div class="groupfolders" id="groupfolders{{group.id}}">
-{% for m in group.members.all %}
-{% if forloop.counter0 %}, {% endif %}<a onclick="javascript:$('.leftpart').load('/group/{{group.id}}/user/{{m.id}}');" href="about:none">{{m.username}}</a>
-{% endfor %}
 </div>
 
 </div>
+
+<script>
+{% for p in group.folders.all %}
+$.ajax({
+      url: "/folder/"+{{p.id}},
+      global: false,
+      type: "POST",
+      data: ({}),
+      success: function(msg){
+	if (msg!="None"){
+	    $('#groupfolders'+{{group.id}}).append(msg);
+	    //$('#folderbody'+{{p.id}}).css("width","95%").css("margin-left","5px").css("margin-right","5px");
+	}
+	else{
+	}
+      }
+   }
+)
+{% empty %}
+$('#groupfolders'+{{group.id}}).html("No folders")
+{% endfor %}
+</script>

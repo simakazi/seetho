@@ -1,8 +1,8 @@
-function addpull(id){
-a=prompt("Please, enter new pull's title:","new pull");
+function addfolder(id){
+a=prompt("Please, enter new folder's title:","new folder");
 if (a!=null){
 $.ajax({
-      url: "/create_pull/",
+      url: "/create_folder/",
       global: false,
       type: "POST",
       data: ({title : a,group_id:id}),
@@ -11,11 +11,11 @@ $.ajax({
 	 alert("Something gone wrong!"); 
 	}
 	else{
-	    if ($('#grouppulls'+id).html()=="No pulls")
-		$('#grouppulls'+id).html("");
+	    if ($('#groupfolders'+id).html()=="No folders")
+		$('#groupfolders'+id).html("");
 	 $('#groupbody'+id).append(msg);
-	//id=$("#groupbody"+id+" > .pullbody:last").attr("id").substring(8);
-	//$("#createpull").before('<div id="openpull'+id+'" class="rightmenu" onclick="javascript:openpull('+id+');">'+$('.pullheadertext:first').text()+'</div>');
+	//id=$("#groupbody"+id+" > .folderbody:last").attr("id").substring(8);
+	//$("#createfolder").before('<div id="openfolder'+id+'" class="rightmenu" onclick="javascript:openfolder('+id+');">'+$('.folderheadertext:first').text()+'</div>');
 
 	}
       }
@@ -43,7 +43,7 @@ $.ajax({
 
 function togglegroup(a){
 //closeaccordion();
-$('#grouppulls'+a).toggle();
+$('#groupfolders'+a).toggle();
 if ($('#togglegroup'+a).text()=='show')
 $('#togglegroup'+a).text('hide');
 else
@@ -82,8 +82,8 @@ $.ajax({
 	},
       success: function(msg){
 	 $('.leftpart').prepend(msg);
-	id=$(".pullbody:first").attr("id").substring(8);
-	$("#creategroup").before('<div id="opengroup'+id+'" class="rightmenu" onclick="javascript:opengroup('+id+');">'+$('.pullheadertext:first').text()+'</div>');
+	id=$(".folderbody:first").attr("id").substring(8);
+	$("#creategroup").before('<div id="opengroup'+id+'" class="rightmenu" onclick="javascript:opengroup('+id+');">'+$('.folderheadertext:first').text()+'</div>');
       }
    }
 );

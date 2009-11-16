@@ -1,35 +1,38 @@
 {% extends "index.html" %}
+
 {% block mainmenu %}
 <div class="button" onclick="javascript:document.location='/'">News</div>
-<div class="button" onclick="javascript:document.location='/folders'">Folders</div>
-<div class="button_disabled">Groups</div>
+<div class="button_disabled">Folders</div>
+<div class="button" onclick="javascript:document.location='/groups'">Groups</div>
 <div class="button" onclick="javascript:document.location='/search'">Search</div>
 <div class="button" onclick="javascript:document.location='/profile'">Profile</div>
 <div class="button" onclick="javascript:document.location='/logout'">Logout</div>
 {% endblock %}
 
 {% block rightpart %}
-<div class="folderheader">Groups</div>
-{% if groups %}
-<div class="rightmenu" onclick="javascript:document.location='/groups/';">All</div>
-{% for p in groups %}
-<div id="opengroup{{p.id}}" class="rightmenu" onclick="javascript:opengroup({{p.id}});">{{p.title}}</div>
+<div class="folderheader">Folders</div>
+{% if folders %}
+<div class="rightmenu" onclick="javascript:document.location='/folders/';">All</div>
+{% for p in folders %}
+<div id="openfolder{{p.id}}" class="rightmenu" onclick="javascript:openfolder({{p.id}});">{{p.title}}</div>
 {% endfor %}
 {% endif %}
-<div id="creategroup" class="rightmenu" onclick="javascript:create_new_group();">Create new group</div>
+<div id="createfolder" class="rightmenu" onclick="javascript:create_new_folder();">Create new folder</div>
 {% endblock %}
 
 {% block scripts %}
-{% for p in groups %}
+{% for p in folders %}
 <script>
 $.ajax({
-      url: "/group/"+{{p.id}},
+      url: "/folder/"+{{p.id}},
       global: false,
-      type: "GET",
+      type: "POST",
       data: ({}),
       success: function(msg){
 	if (msg!="None"){
 	    $('.leftpart').append(msg);
+	}
+	else{
 	}
       }
    }

@@ -2,14 +2,14 @@
 
 <div class="groupbody" id="groupbody{{group.id}}">
 
-<div class="pullheader" id="groupheader{{group.id}}">
-<div class="pullheadertext">{{group.title}}. 
+<div class="folderheader" id="groupheader{{group.id}}">
+<div class="folderheadertext">{{group.title}}. 
 {% ifnotequal rights "N" %}
 you're {{ rights|full_right }} of this group
 {% endifnotequal %}
 </div>
 
-<div class="smallbutton" onclick="javascript:$('.leftpart').load('/group/{{group.id}}/pulls');">pulls</div>
+<div class="smallbutton" onclick="javascript:$('.leftpart').load('/group/{{group.id}}/folders');">folders</div>
 <div class="smallbutton" onclick="javascript:$('.leftpart').load('/group/{{group.id}}/users');">users</div>
 <div class="smallbutton" onclick="javascript:$('.leftpart').load('/group/{{group.id}}/topics');">topics</div>
 
@@ -31,8 +31,8 @@ you're {{ rights|full_right }} of this group
 
 <!--div class="groupbody" id="groupbody{{group.id}}">
 
-<div class="pullheader" id="groupheader{{group.id}}">
-<div class="pullheadertext">{{group.title}}. 
+<div class="folderheader" id="groupheader{{group.id}}">
+<div class="folderheadertext">{{group.title}}. 
 {% ifnotequal rights "N" %}
 you're {{ rights|full_right }} of this group
 {% endifnotequal %}
@@ -44,7 +44,7 @@ you're {{ rights|full_right }} of this group
 <div class="smallbutton" onclick="javascript:unsubscribe_group({{group.id}});">unsubscribe</div>
 {% endifequal %}
 {% ifpermit rights A %}
-<div class="smallbutton" onclick="javascript:addpull({{group.id}});">add pull</div>
+<div class="smallbutton" onclick="javascript:addfolder({{group.id}});">add folder</div>
 {% endifpermit %}
 <div class="smallbutton" id="togglegroup{{group.id}}" onclick="javascript:togglegroup({{group.id}});">hide</div>
 <div class="smallbutton" onclick="javascript:updategroup({{group.id}});">update</div>
@@ -53,8 +53,8 @@ you're {{ rights|full_right }} of this group
 {% endifpermit %}
 </div>
 
-<div class="grouppulls" id="grouppulls{{group.id}}">
-<b><a href="/group/{{group.id}}/pulls">Pulls:</b> {{group.pulls.count}}</a><br />
+<div class="groupfolders" id="groupfolders{{group.id}}">
+<b><a href="/group/{{group.id}}/folders">Folders:</b> {{group.folders.count}}</a><br />
 <b><a href="/group/{{group.id}}/users">Users:</b> {{group.members.count}}</a><br />
 <b><a href="/group/{{group.id}}/topics">Topics:</b> {{group.topic_set.count}}</a>
 </div>
@@ -62,18 +62,18 @@ you're {{ rights|full_right }} of this group
 </div>
 
 <!--
-{% for p in group.pulls.all %}
+{% for p in group.folders.all %}
 <script>
 $("#tabs").tabs();
 $.ajax({
-      url: "/pull/"+{{p.id}},
+      url: "/folder/"+{{p.id}},
       global: false,
       type: "POST",
       data: ({}),
       success: function(msg){
 	if (msg!="None"){
-	    $('#grouppulls'+{{group.id}}).append(msg);
-	    //$('#pullbody'+{{p.id}}).css("width","95%").css("margin-left","5px").css("margin-right","5px");
+	    $('#groupfolders'+{{group.id}}).append(msg);
+	    //$('#folderbody'+{{p.id}}).css("width","95%").css("margin-left","5px").css("margin-right","5px");
 	}
 	else{
 	}

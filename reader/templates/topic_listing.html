@@ -1,8 +1,8 @@
 {% load ifpermit %}
-<div class="pullbody" id="topicbody{{topic.id}}">
+<div class="folderbody" id="topicbody{{topic.id}}">
 
-<div class="pullheader" id="topicheader{{topic.id}}">
-<div class="pullheadertext">{{topic.title}} by {{topic.starter}}</div>
+<div class="folderheader" id="topicheader{{topic.id}}">
+<div class="folderheadertext">{{topic.title}} by {{topic.starter}}</div>
 <div class="smallbutton" id="toggletopic{{topic.id}}" onclick="javascript:toggletopic({{topic.id}});">hide</div>
 <div class="smallbutton" onclick="javascript:updatetopic({{topic.id}});">update</div>
 {% ifpermit rights A %}
