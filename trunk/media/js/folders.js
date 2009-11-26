@@ -47,7 +47,7 @@ $('#folderbody'+id).html("<img src='/img/loading.gif' />");
 $.ajax({
       url: "/folder/"+id,
       global: false,
-      type: "GET",
+      type: "POST",
       data: ({}),
       success: function(msg){
 	if (msg!="None"){

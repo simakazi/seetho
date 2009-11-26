@@ -373,7 +373,16 @@ def list_folder_entries(request,folder_id):
       p=Folder.objects.get(id=folder_id)
       full_folder(p)
       e=p.folderentry_set.all()[0:20]
-      return render_to_response("folder_listing.html",{'folder':p,'entries':e,'more':(e.count()<p.folderentry_set.count())*20})
+      userfolder=None
+      try:
+        userfolder=UserFolder.objects.get(user=request.user,folder=p)
+      except:
+        pass
+      if request.method=="POST":
+        return render_to_response("folder_listing.html",{'userfolder':userfolder,'folder':p,'entries':e,'more':(e.count()<p.folderentry_set.count())*20})
+      else:
+        P=Folder.objects.filter(Q(userfolder__user=request.user)|Q(group__members=request.user))
+        return render_to_response("folder_direct.html",{'userfolder':userfolder,'folder':p,'folders':P,'entries':e,'more':(e.count()<p.folderentry_set.count())*20})
     except:
       return HttpResponseNotFound("")
 

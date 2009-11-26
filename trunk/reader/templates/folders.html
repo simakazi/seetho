@@ -14,7 +14,7 @@
 {% if folders %}
 <div class="rightmenu" onclick="javascript:document.location='/folders/';">All</div>
 {% for p in folders %}
-<div id="openfolder{{p.id}}" class="rightmenu" onclick="javascript:openfolder({{p.id}});">{{p.title}}</div>
+<div id="openfolder{{p.id}}" class="rightmenu" onclick="javascript:document.location='/folder/{{p.id}}';">{{p.title}}</div>
 {% endfor %}
 {% endif %}
 <div id="createfolder" class="rightmenu" onclick="javascript:create_new_folder();">Create new folder</div>
