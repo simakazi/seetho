@@ -1,5 +1,5 @@
-/*d9f3cb*/
-/*b8e3a0*/
+/*C5CDC0*/
+/*a4b596*/
 * {
 margin:0;
 padding:0;
@@ -39,7 +39,7 @@ padding-bottom:3px;
 color:#000000;
 font-size:11pt;
 text-align:center;
-background-color:#b8e3a0;
+background-color:#a4b596;
 background-repeat:no-repeat;
 height:25px;
 }
@@ -62,20 +62,20 @@ padding-top:0px;
     color:#000000;
     font-size:8pt;
     text-align:right;
-    background-color:#b8e3a0;
+    background-color:#a4b596;
     background-repeat:no-repeat;
 }
 
 
 div.news {
-background-color:#d9f3cb;
+background-color:#C5CDC0;
 width: 50%;
 }
 
 div.folderheader{
 border-spacing:4px;
-border:solid 1px #d9f3cb;
-background-color:#d9f3cb;
+border:solid 1px #C5CDC0;
+background-color:#C5CDC0;
 width:100%;
 cursor:default;
 }
@@ -100,7 +100,7 @@ vertical-align:middle;
 padding-left:5px;
 padding-right:5px;
 border: 0px;
-background-color:#b8e3a0;
+background-color:#a4b596;
 /*background-color:#e5c3df;*/
 }
 
@@ -114,16 +114,18 @@ background-color:#ffffff;
 div.folderbody{
 
 margin-right:0px;
-border:solid 5px #d9f3cb;
+border:solid 2px #C5CDC0;
+border-right:0px;
+border-bottom:0px;
 padding-right:10px;
 width:90%;
-background-color:#d9f3cb;
+background-color:#C5CDC0;
 margin-bottom:20px;
 }
 
 div.groupbody{
 margin-right:0px;
-border:solid 5px #d9f3cb;
+border:solid 2px #C5CDC0;
 padding-right:0px;
 width:90%;
 background-color:white;
@@ -132,7 +134,7 @@ margin-bottom:20px;
 
 
 .dialog{
-border:solid 3px #d9f3cb;
+border:solid 3px #C5CDC0;
 background-color:white;
 text-align:right;
 }
@@ -155,7 +157,7 @@ width:96%;
 }
 
 .folderbody hr {
-border: dashed 1px #b8e3a0;
+border: dashed 1px #a4b596;
 }
 
 div.entry {
@@ -186,8 +188,8 @@ color:#000000;
 .accordion h3 {
 font-size:9pt;
 color:#000000;
-background-color:#d9f3cb;
-border:solid 1px #b8e3a0;
+background-color:#C5CDC0;
+border:solid 1px #a4b596;
 }
 .accordion div {
 background-color:#ffffff;
@@ -201,7 +203,7 @@ div.mainmenu {
 width: 100%;
 margin-top:0px;
 margin-bottom:3px;
-background-color:#d9f3cb;
+background-color:#C5CDC0;
 }
 
 div.button {
@@ -212,7 +214,7 @@ height:20px;
 text-align:center;
 vertical-align:middle;
 display:table-cell;
-background-color:#d9f3cb;
+background-color:#C5CDC0;
 padding-left:2px;
 padding-right:2px;
 padding-top:2px;
@@ -228,7 +230,7 @@ height:20px;
 text-align:center;
 vertical-align:middle;
 display:table-cell;
-background-color:#b8e3a0;
+background-color:#a4b596;
 padding-left:2px;
 padding-right:2px;
 padding-top:2px;
@@ -263,9 +265,9 @@ div.buttonOpenID:hover {
 cursor:pointer;
 cursor:hand;
 color:#000000;
-/*background-color:#d9f3cb;
+/*background-color:#C5CDC0;
 */
-border: 3px solid #d9f3cb;
+border: 3px solid #C5CDC0;
 }
 .ui-dialog-titlebar{
 display:none;
@@ -280,7 +282,7 @@ height:20px;
 text-align:center;
 vertical-align:middle;
 display:table-cell;
-background-color:#d9f3cb;
+background-color:#C5CDC0;
 padding-left:2px;
 padding-right:2px;
 padding-top:2px;
@@ -308,7 +310,7 @@ float:left;
 }
 div.rightpart {
 margin-left:70%;
-border: solid 3px #d9f3cb;
+border: solid 3px #C5CDC0;
 }
 
 div.undercomment {
@@ -328,8 +330,9 @@ div.rightmenu:hover {
 cursor:pointer;
 cursor:hand;
 color:#000000;
-background-color:#d9f3cb;
+background-color:#C5CDC0;
 }
+
 
 h1 {
 font-size:11pt;
