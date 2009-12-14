@@ -1,0 +1,16 @@
+--T<his line, and those below, will be ignored--
+
+M    media/css/main.css
+AM   media/img/facebook.ico
+M    media/img/twitter.ico
+M    media/js/folders.js
+M    reader/templates/one_entry.html
+M    reader/templates/folder_listing.html
+M    reader/templates/folder_direct.html
+M    reader/templates/index.html
+M    reader/templates/simple_entry.html
+A    class_diagram.xmi
+A    class_diagram
+AM   class_diagram/OpenId.png
+AM   class_diagram/Диаграмма классов.png
+AM   seetho.tar.gz

@@ -1,9 +1,13 @@
 function tweetentry(text,id){
+window.open('http://twitter.com/home?status='+encodeURIComponent(text),'twitter','toolbar=0,status=0');
+/*
 $("#upyachka").remove();
 $("#main").append("<iframe width='0' height='0' frameborder='0' style='display:none' id='upyachka' name='upyachka'></iframe>");
 $("#upyachka").append("<form id='callme' target='upyachka' action='http://twitter.com/statuses/update.xml' method='post'><input name='status'' value='"+text+"'><input type='submit'></input></form>");
 $("#callme").trigger("submit");
 $("a[name='tweet"+id+"']").replaceWith("<i>tweeted</i>");
+*/
+
 /*$.post("http://twitter.com/statuses/update.json", { status: text },
   function(data){
     alert("Data Loaded: " + data);
@@ -21,6 +25,15 @@ $.ajax({
     });
 */
 }
+
+function facebook_share(u,t){
+window.open('http://www.facebook.com/sharer.php?u='+encodeURIComponent(u)+'&t='+encodeURIComponent(t),'sharer','toolbar=0,status=0,width=626,height=436');
+}
+
+function bookmark_on_delicious(u,t){
+window.open('http://delicious.com/save?v=5&noui&jump=close&url='+encodeURIComponent(u)+'&title='+encodeURIComponent(t),'delicious','toolbar=550,status=550');
+}
+
 
 function openfolder(id){
 closeaccordion();

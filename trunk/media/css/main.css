@@ -89,6 +89,10 @@ font-weight:bold;
 }
 
 div.smallbutton {
+-moz-border-radius:6px;
+-webkit-border-radius:6px;
+-moz-box-shadow:0 0px 0px #000000;
+-webkit-box-shadow:0 0px 0px #000000;
 font-size:8pt;
 text-align:center;
 color:#000000;
@@ -242,6 +246,10 @@ cursor:pointer;
 cursor:hand;
 color:#000000;
 background-color:#ffffff;
+-moz-border-radius:6px;
+-webkit-border-radius:6px;
+-moz-box-shadow:0 0px 0px #000000;
+-webkit-box-shadow:0 0px 0px #000000;
 }
 
 

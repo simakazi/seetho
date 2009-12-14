@@ -17,7 +17,12 @@
 {% for e in entries %}
 {% with e.entry as entry %}
 <div class="entry">
-<div style="display:table-cell;width:100%;padding-bottom:3px;"><a href="javascript:tweetentry('{{entry.url}} {{entry.title}}',{{entry.id}})" name="tweet{{entry.id}}" ><img src="/img/twitter.ico" alt="Tweet this!" title="Tweet this!" align="left" style="padding-right:10px;border:0;"></img></a><h3><a href="/entry/{{ entry.id }}">{{ entry.title }}</a></h3></div>
+<div style="display:table-cell;width:100%;padding-bottom:3px;">
+<h3><a href="/entry/{{ entry.id }}">{{ entry.title }}</a>
+<a href="javascript:tweetentry('{{entry.url}} {{entry.title}}',{{entry.id}})" name="tweet{{entry.id}}" ><img src="/img/twitter.ico" alt="Tweet this!" title="Tweet this!"></img></a>
+<a href="javascript:facebook_share('{{entry.url|escapejs}}','{{entry.title|escapejs}}')"><img src="/img/facebook.ico" alt="Share on Facebook" title="Share on Facebook"></img></a>
+<a href="javascript:bookmark_on_delicious('{{entry.url}}','{{entry.title}}');"><img src="http://static.delicious.com/img/delicious.small.gif" height="10" width="10" alt="Bookmark this on Delicious" title="Bookmark this on Delicious"></img></a>
+</h3></div>
 <div class="timestamp" style="display:table-cell;white-space: nowrap;">{{entry.created}}</div>
 <div class="undercomment"><a href="{{entry.url}}">{{entry.url}}</a></div>
 {% autoescape off %}
