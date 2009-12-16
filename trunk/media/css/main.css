@@ -37,7 +37,7 @@ padding-bottom:3px;
 
 #header {
 color:#000000;
-font-size:11pt;
+font-size:12pt;
 text-align:center;
 background-color:#a4b596;
 background-repeat:no-repeat;
@@ -60,7 +60,7 @@ padding-top:0px;
    width:100%;
    height:20px;
     color:#000000;
-    font-size:8pt;
+    font-size:9pt;
     text-align:right;
     background-color:#a4b596;
     background-repeat:no-repeat;
@@ -84,7 +84,7 @@ div.folderheadertext{
 display: table-cell;
 width:100%;
 color:#000000;
-font-size:9pt;
+font-size:10pt;
 font-weight:bold;
 }
 
@@ -93,7 +93,7 @@ div.smallbutton {
 -webkit-border-radius:6px;
 -moz-box-shadow:0 0px 0px #000000;
 -webkit-box-shadow:0 0px 0px #000000;
-font-size:8pt;
+font-size:9pt;
 text-align:center;
 color:#000000;
 height:10px;
@@ -166,7 +166,7 @@ border: dashed 1px #a4b596;
 
 div.entry {
 color:#000000;
-font-size:9pt;
+font-size:10pt;
 background-color:#ffffff;
 background-repeat:no-repeat;
 margin-bottom:1px;
@@ -212,7 +212,7 @@ background-color:#C5CDC0;
 
 div.button {
 color:#000000;
-font-size:10pt;
+font-size:11pt;
 width:120px;
 height:20px;
 text-align:center;
@@ -228,7 +228,7 @@ padding-bottom:2px;
 div.button_disabled {
 color:#000000;
 font-style:bold;
-font-size:10pt;
+font-size:11pt;
 width:120px;
 height:20px;
 text-align:center;
@@ -255,7 +255,7 @@ background-color:#ffffff;
 
 div.buttonOpenID {
 color:#000000;
-font-size:10pt;
+font-size:11pt;
 width:20px;
 height:20px;
 text-align:center;
@@ -284,7 +284,7 @@ color:red;
 
 div.subbutton {
 color:#000000;
-font-size:10pt;
+font-size:11pt;
 width:150px;
 height:20px;
 text-align:center;
@@ -308,7 +308,7 @@ div.timestamp {
 color:#a09b75;
 text-align:right;
 padding-right:10px;
-font-size:8pt;
+font-size:9pt;
 }
 
 div.leftpart {

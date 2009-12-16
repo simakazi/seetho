@@ -20,6 +20,7 @@
 <div id="createfolder" class="rightmenu" onclick="javascript:create_new_folder();">Create new folder</div>
 {% endblock %}
 
+
 {% block scripts %}
 {% for p in folders %}
 <script>
@@ -39,4 +40,13 @@ $.ajax({
 )
 </script>
 {% endfor %}
+{% endblock %}
+
+{% block leftpart %}
+{% if not folders %}
+<h1>
+You have not add any feeds yet?!<br/>
+Just follow <a href="/add_feed">this link</a> and add one!
+</h1>
+{% endif %}
 {% endblock %}

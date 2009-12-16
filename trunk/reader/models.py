@@ -108,6 +108,11 @@ class Comment(models.Model):
 class UserFolder(models.Model):
     folder=models.ForeignKey(Folder)
     user=models.ForeignKey(auth.User)
+    relation=models.CharField(max_length=1,choices=(
+    ('C','Creator'),
+    ('F','Friend'),
+    ('R','Reader'),
+    ))
 
 class News(models.Model):
     title=models.CharField(max_length=100)

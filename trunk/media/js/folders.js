@@ -175,15 +175,7 @@ $.ajax({
 }
 
 function addfeed(id){
-
-if ($("#folderbody"+id+" #accordion").attr("id")=="accordion"){
-$("#accordion").toggle();
-}
-else{
-$("#accordionform").insertAfter("#folderheader"+id);
-$("#accordion").show();
-$("#id_folder_id").attr("value",id);
-}
+document.location="/add_feed?f="+id;
 //$("#id_folder_title").attr("value",id);
 }
 
