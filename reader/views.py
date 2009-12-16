@@ -12,49 +12,62 @@ from django.db.models import Q
 
 @login_required
 def add_feed(request):
-    if request.method == 'POST': 
-	form = FeedForm(request.POST)
-	if form.is_valid():
-	    feed_url=form.cleaned_data['feed_url']
-	    feed_cheked=form.cleaned_data['feed_cheked']
-	    filter_must=form.cleaned_data['filter_must']
-	    filter_may=form.cleaned_data['filter_may']
-	    filter_not=form.cleaned_data['filter_not']
-	    folder_title=form.cleaned_data['folder_title']
-	    folder_id=form.cleaned_data['folder_id']
-	    print filter_must,filter_may,filter_not
-	    #if not feed_cheked:
-	    #	feed_url=feedfinder.feed(feed_url)
-	    feed=Feed.objects.filter(url=feed_url)
-	    if not (feed):
-		feed=Feed(url=feed_url,last_cheked="2009-01-01 00:00")
-		feed.save()
-	    else:
-		feed=feed[0]
-	    
-	    folder=0
-	    if (folder_id!=-1):
-		folder=Folder.objects.get(id=folder_id)
-	    else:
-		folder=Folder(title=folder_title)
-		folder.save()
-	    print folder,folder.id,folder.title
-	    pair=FeedFilterPair(folder=folder,feed=feed,user=request.user,last_cheked="2009-01-01 00:00",title="")
-	    pair.save()
-	    
-	    for q in [(1,filter_must),(2,filter_may),(3,filter_not)]:
-		for w in map(lambda x:x.strip(),q[1].split(",")):
-		    if w!="":
-			filter1=Filter(type=q[0],value=w,pair=pair)
-			filter1.save()
-	    if folder_id==-1:
-		up=UserFolder(user=request.user,folder=folder)
-		up.save()
-            return list_folder_entries(request,folder_id)
-	else:
-	    return HttpResponseServerError("You've entered incorrect URL!")
-    else:
+    if request.method == 'POST':
+        form = FeedForm(request.POST)
+        if form.is_valid():
+            feed_url=form.cleaned_data['feed_url']
+            feed_cheked=form.cleaned_data['feed_cheked']
+            filter_must=form.cleaned_data['filter_must']
+            filter_may=form.cleaned_data['filter_may']
+            filter_not=form.cleaned_data['filter_not']
+            folder_title=form.cleaned_data['folder_title']
+            folder_id=form.cleaned_data['folder_id']
+            if not feed_cheked:
+                feed_url=feedfinder.feed(feed_url)
+            feed=Feed.objects.filter(url=feed_url)
+            if not (feed):
+                feed=Feed(url=feed_url,last_cheked="2009-01-01 00:00")
+                feed.save()
+            else:
+                feed=feed[0]
+                folder=0
+            if (folder_id!=-1):
+                folder=Folder.objects.get(id=folder_id)
+            else:
+                folder=Folder(title=folder_title)
+                folder.save()
+            pair=FeedFilterPair(folder=folder,feed=feed,user=request.user,last_cheked="2009-01-01 00:00",title="")
+            pair.save()
+            for q in [(1,filter_must),(2,filter_may),(3,filter_not)]:
+                for w in map(lambda x:x.strip(),q[1].split(",")):
+                    if w!="":
+                        filter1=Filter(type=q[0],value=w,pair=pair)
+                        filter1.save()
+            if folder_id==-1:
+                up=UserFolder(user=request.user,folder=folder,relation='C')
+                up.save()
+            return HttpResponseRedirect(u"/folder/"+unicode(folder.id))
+        else:
+            return HttpResponseServerError("You've entered incorrect URL!")
+    elif request.method=='GET':
+        url=""
+        try:
+            url=request.GET["u"]
+            url=feedfinder.feed(url)
+            if not url:
+                url="http://"
+        except:
+            url=""
+        folder=None
+        try:
+            folder=request.GET["f"]
+            folder=Folder.objects.get(id=folder)
+        except:
+            folder=None
+        P=Folder.objects.filter(Q(userfolder__user=request.user,userfolder__relation='C')|Q(group__members=request.user))
+        print P
         form = FeedForm()
+        return render_to_response("add_feed.html",{"form":form,"folder":folder,"url":url,"user":request.user,"folders":P})
     return HttpResponseServerError("Bad request!")
 
 def list_entry(request,entry_id):
@@ -277,11 +290,11 @@ def search(request,find_what):
 @login_required
 def find_feed(request):
     if request.method=='GET':
-	url=request.GET["url"]
-	url=feedfinder.feed(url)
-	return HttpResponse(url)
+        url=request.GET["url"]
+        url=feedfinder.feed(url)
+        return HttpResponse(url)
     else:
-	return HttpResponseServerError("Bad request.")
+        return HttpResponseServerError("Bad request.")
 
 @login_required
 def suggest_feed(request):
@@ -304,26 +317,28 @@ def index(request):
 @login_required
 def clean_folder(request):
     if request.method=='POST':
-	try:
-	    id=request.POST['id']
-	    FolderEntry.objects.filter(folder__id=id).delete()
-	    return list_folder_entries(request,id)
-	except:
-	    return HttpResponseNotFound("")
+        try:
+            id=request.POST['id']
+            if ((UserFolder.objects.filter(folder__id=id,user=request.user)[0]).relation=='C'):
+                FolderEntry.objects.filter(folder__id=id).delete()
+            return list_folder_entries(request,id)
+        except:
+            return HttpResponseNotFound("")
     else:
-	return HttpResponseServerError("Bad request.")
+        return HttpResponseServerError("Bad request.")
 
 @login_required
 def purge_folder(request):
     if request.method=='POST':
-	try:
-	    id=request.POST['id']
-	    Folder.objects.filter(id=id).delete()
-	    return HttpResponse("Ok")
-	except:
-	    return HttpResponseNotFound("")
+        try:
+            id=request.POST['id']
+            if (UserFolder.objects.filter(folder__id=id,user=request.user)[0].relation=='C'):
+                Folder.objects.filter(id=id).delete()
+            return HttpResponse("Ok")
+        except:
+            return HttpResponseNotFound("")
     else:
-	return HttpResponseServerError("Bad request.")
+        return HttpResponseServerError("Bad request.")
 
 @login_required
 def create_folder(request):
@@ -339,7 +354,7 @@ def create_folder(request):
 	    group.save
 	except:
 	    pass
-	up=UserFolder(user=request.user,folder=p)
+	up=UserFolder(user=request.user,folder=p,relation='C')
 	up.save()
 	return list_folder_entries(request,p.id)
     else:

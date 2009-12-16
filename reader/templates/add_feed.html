@@ -1,0 +1,45 @@
+{% extends "index.html" %}
+
+{% block mainmenu %}
+<div class="button" onclick="javascript:document.location='/'">News</div>
+<div class="button" onclick="javascript:document.location='/folders'">Folders</div>
+<div class="button" onclick="javascript:document.location='/groups'">Groups</div>
+<div class="button" onclick="javascript:document.location='/search'">Search</div>
+<div class="button" onclick="javascript:document.location='/profile'">Profile</div>
+<div class="button" onclick="javascript:document.location='/logout'">Logout</div>
+{% endblock %}
+
+{% block main %}
+<div style="width:500px; padding-left:10px;">
+<form action="/add_feed/" method="POST">
+<h2>Step №1. Select feed</h2>
+Please, enter url, and press "Check"-button. Program will automaticaly find rss/atom source.<br />
+<input id="id_feed_url" name="feed_url" value="{{url}}" onkeydown='$(this).css("color","black");' onchange='$("#id_feed_cheked").attr("value","False");' onkeyup='javascript:suggest_feed();'/>
+<input type="hidden" value="{% if url %}True{% else %}False{% endif %}" name="feed_cheked" id="id_feed_cheked" />
+<input type="button" onclick='javascript:findFeed();' value="Check" /><br />
+<div id="suggest_feed_div" style="position: absolute; left: 0px; top: 60px;"></div>
+<br />
+<h2>Step №2. Make filters</h2>
+You can choose filters there. Input words, separated by <u>commas</u>.<br />
+News contain <u>all</u> words:<br /><input id="id_filter_must" name="filter_must" maxlength="200"/><br />
+News contain <u>some</u> words:<br /><input id="id_filter_may" name="filter_may" maxlength="200"/><br />
+News <u>don't</u> contain <u>any</u> word:<br /><input id="id_filter_not" name="filter_not" maxlength="200"/><br />
+<br />
+<h2>Step №3. Select folder</h2>
+You can create new folder for holding your news:<br />
+<input type="hidden" id="id_folder_id" name="folder_id" value="{% firstof folder.id -1 %}"/>
+<input id="id_folder_title" name="folder_title" value="{{folder.title}}" maxlength="100"/><br />
+{% if folders %}
+Or you can select excisting folder:
+<div style="border:solid 1px black; width:300px;">
+{% for f in folders %}
+<div class="rightmenu" style="text-align:right;" onclick="javascript:$('#id_folder_id').attr('value','{{f.id}}'); $('#id_folder_title').attr('value','{{f.title}}');">{{f.title}}</div>
+{% endfor %}
+</div>
+{% endif %}
+<br />
+And finaly, check all data and commit it.<br />
+<input type="submit" value="Add feed"></input>
+</form>
+</div>
+{% endblock %}
