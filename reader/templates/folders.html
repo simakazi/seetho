@@ -13,6 +13,7 @@
 <div class="folderheader">Folders</div>
 {% if folders %}
 <div class="rightmenu" onclick="javascript:document.location='/folders/';">All</div>
+<div class="rightmenu" onclick="javascript:document.location='/favorites/';">Favorites</div>
 {% for p in folders %}
 <div id="openfolder{{p.id}}" class="rightmenu" onclick="javascript:document.location='/folder/{{p.id}}';">{{p.title}}</div>
 {% endfor %}

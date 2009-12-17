@@ -185,6 +185,46 @@ $("#accordionform").insertBefore("#footer");
 }
 
 
+function delete_entry(folder_id,entry_id){
+if (confirm("Are you sure?","Delete entry")){
+$.ajax({
+      url: "/delete_entry/",
+      global: false,
+      type: "POST",
+      data: ({folder_id : folder_id,entry_id:entry_id}),
+      error: function(e,q){
+            alert("Something gone wrong!");
+      },
+      success: function(msg){
+        if (msg=="Error"){
+            alert("Something gone wrong!"); 
+        }
+        else{
+        $("#entry"+folder_id+"_"+entry_id).remove();
+
+        }
+      }
+   }
+);
+}
+} 
+
+function favorite(entry_id){
+$.ajax({
+      url: "/favorite_entry/",
+      global: false,
+      type: "POST",
+      data: ({entry_id:entry_id}),
+      error: function(e,q,w){
+            alert("Allready favored!");
+      },
+      success: function(msg){
+        alert(msg);
+      }
+   }
+);
+}
+
 function create_new_folder(){
 a=prompt("Please, enter new folder's title:","new folder");
 if (a!=null){
