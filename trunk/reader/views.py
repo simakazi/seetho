@@ -80,46 +80,46 @@ def list_entry(request,entry_id):
 @login_required
 def purge_group(request):
     if request.method=='POST':
-	try:
-	    id=request.POST['id']
-	    Group.objects.filter(id=id).delete()
-	    return HttpResponse("Ok")
-	except:
-	    return HttpResponseNotFound("")
+        try:
+            id=request.POST['id']
+            Group.objects.filter(id=id).delete()
+            return HttpResponse("Ok")
+        except:
+            return HttpResponseNotFound("")
     else:
-	return HttpResponseServerError("Bad request.")
+        return HttpResponseServerError("Bad request.")
 
 @login_required
 def unsubscribe_group(request,group_id):
     try:
-	g=Group.objects.get(id=group_id)
-	Membership.objects.get(group=g,user=request.user).delete()
-	return list_group(request,group_id)
+        g=Group.objects.get(id=group_id)
+        Membership.objects.get(group=g,user=request.user).delete()
+        return list_group(request,group_id)
     except:
-	return HttpResponseNotFound()
+        return HttpResponseNotFound()
 
 @login_required
 def subscribe_group(request,group_id):
     try:
-	g=Group.objects.get(id=group_id)
-	m=Membership(group=g,user=request.user,rights="R")
-	m.save()
-	return list_group(request,group_id)
+        g=Group.objects.get(id=group_id)
+        m=Membership(group=g,user=request.user,rights="R")
+        m.save()
+        return list_group(request,group_id)
     except:
-	return HttpResponseNotFound()
+        return HttpResponseNotFound()
 
 @login_required
 def list_group(request,group_id):
     try:
-	g=Group.objects.get(id=group_id)
-	rights=""
-	try:
-	    rights=Membership.objects.get(group=g,user=request.user).rights
-	except:
-	    rights="N"
-	return render_to_response("group_listing.html",{"group":g,"rights":rights})
+        g=Group.objects.get(id=group_id)
+        rights=""
+        try:
+            rights=Membership.objects.get(group=g,user=request.user).rights
+        except:
+            rights="N"
+        return render_to_response("group_listing.html",{"group":g,"rights":rights})
     except:
-	return HttpResponseNotFound()
+        return HttpResponseNotFound()
 
 @login_required
 def create_group(request):
@@ -133,26 +133,42 @@ def create_group(request):
 @login_required
 def list_topic(request,id):
     try:
-	topic=Topic.objects.get(id=id)
-	rights=""
-	try:
-	    rights=Membership.objects.get(group=topic.group,user=request.user).rights
-	except:
-	    rights="N"
-	return render_to_response("topic_listing.html",{'topic':topic,'rights':rights})
+        topic=Topic.objects.get(id=id)
+        rights=""
+        try:
+            rights=Membership.objects.get(group=topic.group,user=request.user).rights
+        except:
+            rights="N"
+        return render_to_response("topic_listing.html",{'topic':topic,'rights':rights})
     except:
-	return HttpResponseNotFound()
+        return HttpResponseNotFound()
+
+@login_required
+def delete_entry(request):
+    if request.method=='POST':
+        try:
+            folder=request.POST["folder_id"]
+            entry=request.POST["entry_id"]
+            if (folder!="-1"):
+                FolderEntry.objects.filter(folder__id=folder,entry__id=entry).delete();
+            else:
+                Favor.objects.filter(entry__id=entry,user=request.user).delete();
+            return HttpResponse("Ok")
+        except:
+            return HttpResponseServerError("Error")
+    else:
+        return HttpResponseServerError("Error")
 
 @login_required
 def add_comment(request):
     if request.method=='POST':
-	text=request.POST["text"]
-	topic=request.POST["topic"]
-	new=Comment(topic=Topic.objects.get(id=topic),text=text,author=request.user,created=datetime.now(),carma=0)
-	new.save()
-	return HttpResponse("Ok")
+        text=request.POST["text"]
+        topic=request.POST["topic"]
+        new=Comment(topic=Topic.objects.get(id=topic),text=text,author=request.user,created=datetime.now(),carma=0)
+        new.save()
+        return HttpResponse("Ok")
     else:
-	return HttpResponseServerError("Bad request.")
+        return HttpResponseServerError("Bad request.")
 
 @login_required
 def my_profile(request):
@@ -161,113 +177,113 @@ def my_profile(request):
 @login_required
 def save_profile(request):
     if request.method=='POST':
-	login=request.POST["id_username"]
-	first=request.POST["id_first_name"]
-	last=request.POST["id_last_name"]
-	user=auth.User.objects.get(id=request.user.id)
-	user.first_name=first
-	user.last_name=last
-	user.username=login
-	user.save()
-	return HttpResponseRedirect("/profile")
+        login=request.POST["id_username"]
+        first=request.POST["id_first_name"]
+        last=request.POST["id_last_name"]
+        user=auth.User.objects.get(id=request.user.id)
+        user.first_name=first
+        user.last_name=last
+        user.username=login
+        user.save()
+        return HttpResponseRedirect("/profile")
 
 @login_required
 def user_profile(request,user_id):
     user=0
     try:
-	user=auth.User.objects.get(id=user_id)
+        user=auth.User.objects.get(id=user_id)
     except:
-	return HttpResponseNotFound("No such user")
+        return HttpResponseNotFound("No such user")
     return render_to_response("profile.html",{"victim":user,"user":request.user})
-    
+
 @login_required
 def list_group_user(request,group_id,user_id):
-    #try:
-    user=auth.User.objects.get(id=user_id)
-    group=Group.objects.get(id=group_id)
-    comments_count=Comment.objects.filter(topic__group=group,author=user).count()
-    topics_count=Topic.objects.filter(group=group,starter=user).count()
-    folders_count=group.folders.filter(userfolder__user=user).count()
-    rights=""
     try:
-	rights=Membership.objects.get(group=group,user=request.user).rights
+        user=auth.User.objects.get(id=user_id)
+        group=Group.objects.get(id=group_id)
+        comments_count=Comment.objects.filter(topic__group=group,author=user).count()
+        topics_count=Topic.objects.filter(group=group,starter=user).count()
+        folders_count=group.folders.filter(userfolder__user=user).count()
+        rights=""
+        try:
+            rights=Membership.objects.get(group=group,user=request.user).rights
+        except:
+            rights="N"
+        hisrights=""
+        try:
+            hisrights=Membership.objects.get(group=group,user=user).rights
+        except:
+            hisrights="N"
+        return render_to_response("group_user.html",{"user":user,"group":group,"comments":comments_count,"topics":topics_count,"folders":folders_count,"rights":rights,"hisrights":hisrights})
     except:
-	rights="N"
-    hisrights=""
-    try:
-	hisrights=Membership.objects.get(group=group,user=user).rights
-    except:
-	hisrights="N"
-    return render_to_response("group_user.html",{"user":user,"group":group,"comments":comments_count,"topics":topics_count,"folders":folders_count,"rights":rights,"hisrights":hisrights})
-    #except:
-    #	return HttpResponseNotFound()
+        return HttpResponseNotFound()
 
 @login_required
 def grant_group_user_rights(request,group_id,user_id,new_rights):
-    #try:
-    user=auth.User.objects.get(id=user_id)
-    group=Group.objects.get(id=group_id)
-    rights=""
     try:
-	rights=Membership.objects.get(group=group,user=request.user).rights
+        user=auth.User.objects.get(id=user_id)
+        group=Group.objects.get(id=group_id)
+        rights=""
+        try:
+            rights=Membership.objects.get(group=group,user=request.user).rights
+        except:
+            rights="N"
+        his_rights=""
+        M=0
+        try:
+            M=Membership.objects.get(group=group,user=user)
+            his_rights=M.rights
+        except:
+            his_rights="N"
+        if ( rights=='C' or (rights=='A' and (new_rights=='M' or (his_rights=='M' and new_rights=='R')))):
+            M.rights=new_rights
+            M.save()
+        return list_group_user(request,group_id,user_id)
     except:
-	rights="N"
-    his_rights=""
-    M=0
-    try:
-	M=Membership.objects.get(group=group,user=user)
-	his_rights=M.rights
-    except:
-	his_rights="N"
-    if ( rights=='C' or (rights=='A' and (new_rights=='M' or (his_rights=='M' and new_rights=='R')))):
-	M.rights=new_rights
-	M.save()	
-    return list_group_user(request,group_id,user_id)
-    #except:
-    #	return HttpResponseNotFound()
+        return HttpResponseNotFound()
 
 @login_required
 def start_topic(request):
     if request.method=='POST':
-	title=request.POST["title"]
-	group_id=request.POST["group_id"]
-	new=Topic(title=title,starter=request.user,started=datetime.now(),group=Group.objects.get(id=group_id),last_post=datetime.now())
-	new.save()
-	return list_topic(request,new.id)
+        title=request.POST["title"]
+        group_id=request.POST["group_id"]
+        new=Topic(title=title,starter=request.user,started=datetime.now(),group=Group.objects.get(id=group_id),last_post=datetime.now())
+        new.save()
+        return list_topic(request,new.id)
     else:
-	return HttpResponseServerError("Bad request.")
+        return HttpResponseServerError("Bad request.")
 
 @login_required
 def list_group_folders(request,groupid):
     rights=""
     try:
-	rights=Membership.objects.get(group=groupid,user=request.user).rights
+        rights=Membership.objects.get(group=groupid,user=request.user).rights
     except:
-	rights="N"
+        rights="N"
     return render_to_response('group_folders.html', {
-	'group':Group.objects.get(id=groupid),'rights':rights,'user':request.user
+    'group':Group.objects.get(id=groupid),'rights':rights,'user':request.user
     })
 
 @login_required
 def list_group_users(request,groupid):
     rights=""
     try:
-	rights=Membership.objects.get(group=groupid,user=request.user).rights
+        rights=Membership.objects.get(group=groupid,user=request.user).rights
     except:
-	rights="N"
+        rights="N"
     return render_to_response('group_users.html', {
-	'group':Group.objects.get(id=groupid),'rights':rights,'user':request.user
+    'group':Group.objects.get(id=groupid),'rights':rights,'user':request.user
     })
 
 @login_required
 def list_group_topics(request,groupid):
     rights=""
     try:
-	rights=Membership.objects.get(group=groupid,user=request.user).rights
+        rights=Membership.objects.get(group=groupid,user=request.user).rights
     except:
-	rights="N"
+        rights="N"
     return render_to_response('group_topics.html', {
-	'group':Group.objects.get(id=groupid),'rights':rights,'user':request.user
+    'group':Group.objects.get(id=groupid),'rights':rights,'user':request.user
     })
 
 @login_required
@@ -277,15 +293,15 @@ def list_groups(request):
 @login_required
 def search(request,find_what):
     if find_what=="":
-	return render_to_response("search.html",{})
+        return render_to_response("search.html",{})
     else:
-	return render_to_response("search.html",
-	{
-	    "find_what":find_what,
-	    "groups":Group.objects.filter(title__contains=find_what),
-	    "folders":Folder.objects.filter(title__contains=find_what)
-	}
-	)
+        return render_to_response("search.html",
+        {
+        "find_what":find_what,
+        "groups":Group.objects.filter(title__contains=find_what),
+        "folders":Folder.objects.filter(title__contains=find_what)
+        }
+        )
 
 @login_required
 def find_feed(request):
@@ -299,20 +315,19 @@ def find_feed(request):
 @login_required
 def suggest_feed(request):
     if request.method=='POST':
-	control_id=request.POST['control_id']
-	div_id=request.POST['div_id']
-	first_chars=request.POST['first_chars']
-	L=map(lambda x:x.url,Feed.objects.filter(url__startswith=first_chars)[:5])
-	return render_to_response("suggest_widget.html",{"L":L,"control_id":control_id,"div_id":div_id})
+        control_id=request.POST['control_id']
+        div_id=request.POST['div_id']
+        first_chars=request.POST['first_chars']
+        L=map(lambda x:x.url,Feed.objects.filter(url__startswith=first_chars)[:5])
+        return render_to_response("suggest_widget.html",{"L":L,"control_id":control_id,"div_id":div_id})
     else:
-	print "VERYVERYBAD!"
-	return "Error"
+        return "Error"
 
 def index(request):
     return render_to_response('news.html',{
-	    'news':News.objects.all()[:15],
-	    'user':request.user
-	})
+    'news':News.objects.all()[:15],
+    'user':request.user
+    })
 
 @login_required
 def clean_folder(request):
@@ -343,45 +358,44 @@ def purge_folder(request):
 @login_required
 def create_folder(request):
     if request.method=='POST':
-	title=request.POST['title']
-	p=Folder(title=title)
-	p.save()
-	group_id=-1
-	try:
-	    group_id=request.POST["group_id"]
-	    group=Group.objects.get(id=group_id)
-	    group.folders.add(p)
-	    group.save
-	except:
-	    pass
-	up=UserFolder(user=request.user,folder=p,relation='C')
-	up.save()
-	return list_folder_entries(request,p.id)
+        title=request.POST['title']
+        p=Folder(title=title)
+        p.save()
+        group_id=-1
+        try:
+            group_id=request.POST["group_id"]
+            group=Group.objects.get(id=group_id)
+            group.folders.add(p)
+            group.save()
+        except:
+            up=UserFolder(user=request.user,folder=p,relation='C')
+            up.save()
+        return list_folder_entries(request,p.id)
     else:
-	return HttpResponseServerError("Bad request.")
+        return HttpResponseServerError("Bad request.")
 
 def full_folder(p):
     for q in FeedFilterPair.objects.filter(folder=p):
-	for e in Entry.objects.filter(feed=q.feed,downloaded__gt=q.last_cheked).exclude(folderentry__folder=p):
-	    flag1=True
-	    flag2=False
-	    flag2on=False
-	    flag3=True
-	    for f in Filter.objects.filter(pair=q):
-		if (f.type==1 and e.summary.count(f.value)==0):
-		    flag1=False
-		elif (f.type==2 and e.summary.count(f.value)==0):
-		    flag2on=True
-		elif (f.type==2):
-		    flag2on=True
-		    flag2=True
-		elif (f.type==3 and e.summary.count(f.value)!=0):
-		    flag3=False
-	    if (flag3 and flag1 and (flag2 or (flag2==flag2on))):
-		ep=FolderEntry(folder=p,entry=e)
-		ep.save()
-	q.last_cheked=datetime.now()
-	q.save()
+        for e in Entry.objects.filter(feed=q.feed,downloaded__gt=q.last_cheked).exclude(folderentry__folder=p):
+            flag1=True
+            flag2=False
+            flag2on=False
+            flag3=True
+            for f in Filter.objects.filter(pair=q):
+                if (f.type==1 and e.summary.count(f.value)==0):
+                    flag1=False
+                elif (f.type==2 and e.summary.count(f.value)==0):
+                    flag2on=True
+                elif (f.type==2):
+                    flag2on=True
+                    flag2=True
+                elif (f.type==3 and e.summary.count(f.value)!=0):
+                    flag3=False
+            if (flag3 and flag1 and (flag2 or (flag2==flag2on))):
+                ep=FolderEntry(folder=p,entry=e)
+                ep.save()
+        q.last_cheked=datetime.now()
+        q.save()
 
 def list_folder_entries(request,folder_id):
     try:
@@ -411,12 +425,33 @@ def more_folder_entries(request,folder_id,next):
 def list_folders(request):
     P=Folder.objects.filter(Q(userfolder__user=request.user)|Q(group__members=request.user))
     for p in P:
-	full_folder(p)
+        full_folder(p)
+    F=None
     return render_to_response('folders.html', {
-	'feedform':FeedForm(),'folders':P,'user':request.user
+    'feedform':FeedForm(),'folders':P,'user':request.user
     })
 
+@login_required
+def list_favorites(request):
+    P=Folder.objects.filter(Q(userfolder__user=request.user)|Q(group__members=request.user))
+    f=Favor.objects.filter(user=request.user)
+    return render_to_response("favorites.html",{"favors":f,"folders":P})
 
+@login_required
+def favorite_entry(request):
+    if request.method=="POST":
+        try:
+            e=request.POST["entry_id"]
+            if Favor.objects.filter(entry__id=e,user=request.user).count()==0:
+                f=Favor(user=request.user,entry=Entry.objects.get(id=e))
+                f.save()
+                return HttpResponse("Ok")
+            else:
+                return HttpResponseServerError("Allready favored!")
+        except:
+            return HttpResponseServerError("Bad request.")
+    else:
+        return HttpResponseServerError("Bad request.")
 
 def logout(request):
     auth_logout(request)

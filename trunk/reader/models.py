@@ -17,7 +17,7 @@ class Feed(models.Model):
     link=models.URLField(max_length=200)
 
     def __unicode__(self):
-	return "%s (%s)" % (self.url,self.last_cheked)
+	return u"%s (%s)" % (self.url,self.last_cheked)
     
     class Meta:
 	ordering=["last_cheked"]
@@ -45,6 +45,14 @@ class Folder(models.Model):
     
     class Meta:
 	db_table="folders"
+
+class Favor(models.Model):
+    user=models.ForeignKey(auth.User)
+    entry=models.ForeignKey(Entry)
+    
+    class Meta:
+        db_table="Favors"
+        ordering=["entry"]
 
 class FolderEntry(models.Model):
     folder=models.ForeignKey(Folder)

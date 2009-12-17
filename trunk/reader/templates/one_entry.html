@@ -1,8 +1,8 @@
 {% for e in entries %}
 {% with e.entry as entry %}
-<div class="entry">
+<div class="entry" id="entry{{folder.id}}_{{entry.id}}">
 <div style="display:table-cell;width:100%;padding-bottom:3px;">
-<h3><a href="/entry/{{ entry.id }}">{{ entry.title }}</a>
+<h3><a href="javascript:favorite({{entry.id}});"><img src="/img/star.png" style="padding-right:5px;"/></a><a href="javascript:delete_entry({{folder.id}},{{entry.id}});"><img src="/img/delete.png" style="padding-right:5px;"/></a><a href="/entry/{{ entry.id }}">{{ entry.title }}</a>
 <a href="javascript:tweetentry('{{entry.url}} {{entry.title}}',{{entry.id}})" name="tweet{{entry.id}}" ><img src="/img/twitter.ico" alt="Tweet this!" title="Tweet this!"></img></a>
 <a href="javascript:facebook_share('{{entry.url|escapejs}}','{{entry.title|escapejs}}')"><img src="/img/facebook.ico" alt="Share on Facebook" title="Share on Facebook"></img></a>
 <a href="javascript:bookmark_on_delicious('{{entry.url}}','{{entry.title}}');"><img src="http://static.delicious.com/img/delicious.small.gif" height="10" width="10" alt="Bookmark this on Delicious" title="Bookmark this on Delicious"></img></a>
