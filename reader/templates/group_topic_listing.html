@@ -1,0 +1,33 @@
+{% load ifpermit %}
+<div class="folderbody" id="topicbody{{topic.id}}">
+
+<div class="folderheader" id="topicheader{{topic.id}}">
+<div class="folderheadertext">{{topic.title}} by {{topic.starter}}</div>
+<div class="smallbutton" id="toggletopic{{topic.id}}" onclick="javascript:toggletopic({{topic.id}});">hide</div>
+<div class="smallbutton" onclick="javascript:updatetopic({{topic.id}});">update</div>
+{% ifpermit rights A %}
+<div class="smallbutton" onclick="javascript:cleantopic({{topic.id}});">clean</div>
+<div class="smallbutton" onclick="javascript:purgetopic({{topic.id}});">purge</div>
+{% endifpermit %}
+</div>
+
+{% for c in topic.comment_set.all %}
+<div class="entry">
+<div style="display:table-cell;width:100%;"><a href="about:none" onclick="javascript:$('.leftpart').load('/group/{{topic.group.id}}/user/{{c.author.id}}')">{{ c.author.username }}</a></div>
+<div class="timestamp" style="display:table-cell;white-space: nowrap;">{{c.created|date}} {{c.created|time}}</div>
+{% comment %}
+<div id="carma{{c.id}}" style="display:table-cell;white-space: nowrap;">{{c.carma}}<a>+</a>/<a>-</a></div>
+{% endcomment %}
+{% autoescape off %}
+<p>{{c.text}}</p>
+{% endautoescape %}
+</div>
+{% endfor %}
+<div class="entry" id="div_comment_add{{topic.id}}">
+<div style="display:table-cell;width:100%;">Add your comment</div>
+<textarea id="comment_text{{topic.id}}" wrap="virtual" cols="100" rows="3" style='width: 80%'>Enter your comment...</textarea>
+<br />
+<button onclick="javascript:addcomment({{topic.id}},$('#comment_text{{topic.id}}').attr('value'))">Post</button>
+</div>
+
+</div>

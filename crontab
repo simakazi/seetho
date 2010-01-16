@@ -1,0 +1,5 @@
+SHELL=/bin/sh
+0-59 * * * * manage.py check
+
+
+

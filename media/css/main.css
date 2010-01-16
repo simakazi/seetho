@@ -345,6 +345,30 @@ background-color:#C5CDC0;
 }
 
 
+div.row0menu {
+color:#000000;
+padding-left:10px;
+background-color:#ffffff;
+}
+
+div.row0menu:hover {
+cursor:pointer;
+cursor:hand;
+background-color:#C5CDC0;
+}
+
+div.row1menu {
+color:#000000;
+padding-left:10px;
+background-color:#F5F6F0;
+}
+
+div.row1menu:hover {
+cursor:pointer;
+cursor:hand;
+background-color:#C5CDC0;
+}
+
 h1 {
 font-size:11pt;
 }

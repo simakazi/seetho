@@ -13,27 +13,16 @@
 {% if groups %}
 <div class="rightmenu" onclick="javascript:document.location='/groups/';">All</div>
 {% for p in groups %}
-<div id="opengroup{{p.id}}" class="rightmenu" onclick="javascript:opengroup({{p.id}});">{{p.title}}</div>
+<div id="opengroup{{p.id}}" class="rightmenu" onclick="javascript:document.location='/group/{{p.id}}';">{{p.title}}</div>
 {% endfor %}
 {% endif %}
 <div id="creategroup" class="rightmenu" onclick="javascript:create_new_group();">Create new group</div>
 {% endblock %}
 
-{% block scripts %}
+{% block leftpart %}
 {% for p in groups %}
-<script>
-$.ajax({
-      url: "/group/"+{{p.id}},
-      global: false,
-      type: "GET",
-      data: ({}),
-      success: function(msg){
-	if (msg!="None"){
-	    $('.leftpart').append(msg);
-	}
-      }
-   }
-)
-</script>
+
+<div><a href="/group/{{p.id}}">{{p.title}}</a>: {{p.folders.count}} folders, {{p.members.count}} members, {{p.grouptopic_set.count}} topics</div>
+
 {% endfor %}
 {% endblock %}

@@ -42,13 +42,13 @@ from django.template.loader import render_to_string
 from openid.consumer.consumer import (
     Consumer, SUCCESS, CANCEL, FAILURE)
 from openid.consumer.discover import DiscoveryFailure
-from openid.extensions import sreg
+from openid.extensions import sreg,ax
 
 from django_openid_auth import teams
 from django_openid_auth.forms import OpenIDLoginForm
 from django_openid_auth.store import DjangoOpenIDStore
 
-
+from openid import __version__ as openid_ver
 next_url_re = re.compile('^/[-\w/]+$')
 
 def is_valid_next_url(next):
@@ -144,9 +144,12 @@ def login_begin(request, template_name='openid/login.html',
             request, "OpenID discovery error: %s" % (str(exc),), status=500)
 
     # Request some user details.
+    
     openid_request.addExtension(
         sreg.SRegRequest(optional=['email', 'fullname', 'nickname']))
-
+    ax_req = ax.FetchRequest()
+    ax_req.add(ax.AttrInfo('http://schema.openid.net/namePerson/friendly',alias='nickname',required=True))
+    openid_request.addExtension(ax_req)
     # Request team info
     launchpad_teams = getattr(settings, 'OPENID_LAUNCHPAD_TEAMS_MAPPING', {})
     if launchpad_teams:
@@ -167,12 +170,13 @@ def login_begin(request, template_name='openid/login.html',
 
 def login_complete(request, redirect_field_name=REDIRECT_FIELD_NAME):
     redirect_to = request.REQUEST.get(redirect_field_name, '')
-
     openid_response = parse_openid_response(request)
     if not openid_response:
         return render_failure(
             request, 'This is an OpenID relying party endpoint.')
-
+    ax_res=ax.FetchResponse.fromSuccessResponse(openid_response)
+    print ax_res
+    print openid_ver
     if openid_response.status == SUCCESS:
         user = authenticate(openid_response=openid_response)
         if user is not None:

@@ -69,10 +69,10 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
-    'django.middleware.common.CommonMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-)
+            'django.middleware.common.CommonMiddleware',
+            'django.contrib.sessions.middleware.SessionMiddleware',
+            'django.contrib.auth.middleware.AuthenticationMiddleware',
+        )
 
 ROOT_URLCONF = 'urls'
 
@@ -96,6 +96,14 @@ INSTALLED_APPS = (
     'django_openid_auth'
 )
 
+TEMPLATE_CONTEXT_PROCESSORS = (
+            'django.core.context_processors.auth',
+            'django.core.context_processors.debug',
+            'django.core.context_processors.i18n',
+            'django.core.context_processors.media',
+            'django.core.context_processors.request',
+)
+
 AUTHENTICATION_BACKENDS = (
             'django_openid_auth.auth.OpenIDBackend',
             'django.contrib.auth.backends.ModelBackend',
@@ -111,5 +119,7 @@ DEFAULT_FROM_EMAIL=''
 OPENID_CREATE_USERS = True
 OPENID_UPDATE_DETAILS_FROM_SREG = True
 
-LOGIN_URL = '/openid/login/'
+LOGIN_URL = '/openid/login'
 LOGIN_REDIRECT_URL = '/'
+
+

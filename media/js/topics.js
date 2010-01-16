@@ -85,7 +85,7 @@ function newtopic(id){
 a=prompt("Please, enter new topic's title:","new topic");
 if (a!=null){
 $.ajax({
-      url: "/start_topic/",
+      url: "/start_group_topic/",
       global: false,
       type: "POST",
       data: ({title : a,group_id:id}),
