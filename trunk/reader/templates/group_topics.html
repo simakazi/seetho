@@ -1,51 +1,59 @@
+{% extends "index.html" %}
 {% load ifpermit %}
 
+{% block mainmenu %}
+<div class="button" onclick="javascript:document.location='/'">News</div>
+<div class="button" onclick="javascript:document.location='/folders'">Folders</div>
+<div class="button" onclick="javascript:document.location='/groups'">Groups</div>
+<div class="button" onclick="javascript:document.location='/search'">Search</div>
+<div class="button" onclick="javascript:document.location='/profile'">Profile</div>
+<div class="button" onclick="javascript:document.location='/logout'">Logout</div>
+{% endblock %}
+
+{% block rightpart %}
+<div class="folderheader">Groups</div>
+{% if groups %}
+<div class="rightmenu" onclick="javascript:document.location='/groups/';">All</div>
+{% for p in groups %}
+<div id="opengroup{{p.id}}" class="rightmenu" onclick="javascript:document.location='/group/{{p.id}}';">{{p.title}}</div>
+{% endfor %}
+{% endif %}
+<div id="creategroup" class="rightmenu" onclick="javascript:create_new_group();">Create new group</div>
+{% endblock %}
+
+
+{% block leftpart %}
 <div class="groupbody" id="groupbody{{group.id}}">
 
 <div class="folderheader" id="groupheader{{group.id}}">
-<div class="folderheadertext">{{group.title}}. 
+<div class="folderheadertext">{{group.title}}
 {% ifnotequal rights "N" %}
 you're {{ rights|full_right }} of this group
 {% endifnotequal %}
 </div>
-<div class="smallbutton" onclick="javascript:newtopic({{group.id}});">new topic</div>
 
-<div class="smallbutton" onclick="javascript:$('.leftpart').load('/group/{{group.id}}/folders');">folders</div>
-<div class="smallbutton" onclick="javascript:$('.leftpart').load('/group/{{group.id}}/users');">users</div>
-<div class="smallbutton" onclick="javascript:$('.leftpart').load('/group/{{group.id}}/topics');">topics</div>
+{% ifpermit rights R %}
+<div class="smallbutton" onclick="javascript:newtopic({{group.id}})">new topic</div>
+{% endifpermit %}
+<div class="smallbutton" onclick="javascript:document.location='/group/{{group.id}}/folders';">folders</div>
+<div class="smallbutton" onclick="javascript:document.location='/group/{{group.id}}/users';">users</div>
+<div class="smallbutton" onclick="javascript:document.location='/group/{{group.id}}/topics';">topics</div>
+
 {% ifequal rights "N" %}
 <div class="smallbutton" onclick="javascript:subscribe_group({{group.id}});">subscribe</div>
 {% endifequal %}
 {% ifequal rights "R" %}
 <div class="smallbutton" onclick="javascript:unsubscribe_group({{group.id}});">unsubscribe</div>
 {% endifequal %}
+
 {% ifpermit rights C %}
 <div class="smallbutton" onclick="javascript:purgegroup({{group.id}});">purge</div>
 {% endifpermit %}
 </div>
-
-<div class="groupfolders" id="groupfolders{{group.id}}">
-</div>
-
-</div>
-<script>
-{% for p in group.topic_set.all %}
-
-$.ajax({
-      url: "/topic/"+{{p.id}},
-      global: false,
-      type: "POST",
-      data: ({}),
-      success: function(msg){
-	if (msg!="None"){
-	    $('#groupfolders'+{{group.id}}).append(msg);
-	}
-	else{
-	}
-      }
-   }
-)
-{% empty %}
-$('#groupfolders'+{{group.id}}).html("No topics");
+<div class="groupfolders" id="grouptopics{{group.id}}">
+{% for gt in group.grouptopic_set.all %}
+<div onclick="javascript:document.location='/group/{{group.id}}/topic/{{gt.id}}';" class="{% cycle 'row0menu' 'row1menu' %}">{{gt.title}} [{{gt.comment_set.count}} comments] {{gt.started|date}} {{gt.started|time}} - {{gt.last_post|date}} {{gt.last_post|time}}</div>
 {% endfor %}
-</script>
+</div>
+</div>
+{% endblock %}

@@ -64,8 +64,7 @@ def add_feed(request):
             folder=Folder.objects.get(id=folder)
         except:
             folder=None
-        P=Folder.objects.filter(Q(userfolder__user=request.user,userfolder__relation='C')|Q(group__members=request.user))
-        print P
+        P=Folder.objects.filter(Q(userfolder__user=request.user,userfolder__relation='C'))#|Q(group__members=request.user))
         form = FeedForm()
         return render_to_response("add_feed.html",{"form":form,"folder":folder,"url":url,"user":request.user,"folders":P})
     return HttpResponseServerError("Bad request!")
@@ -109,17 +108,34 @@ def subscribe_group(request,group_id):
         return HttpResponseNotFound()
 
 @login_required
-def list_group(request,group_id):
+def list_group_folder(request,group_id,folder_id):
     try:
+        p=Folder.objects.get(id=folder_id)
+        full_folder(p)
+        e=p.folderentry_set.all()[0:20]
+        userfolder=""
+        try:
+            userfolder=Membership.objects.get(group__id=group_id,user=request.user).rights
+            if userfolder!='C' and userfolder!='A':
+                userfolder=""
+        except:
+            userfolder=""
+        return render_to_response("folder_listing.html",{'userfolder':userfolder,'folder':p,'entries':e,'more':(e.count()<p.folderentry_set.count())*20})
+    except:
+        return HttpResponseNotFound("")
+
+@login_required
+def list_group(request,group_id):
+    #try:
         g=Group.objects.get(id=group_id)
         rights=""
         try:
             rights=Membership.objects.get(group=g,user=request.user).rights
         except:
             rights="N"
-        return render_to_response("group_listing.html",{"group":g,"rights":rights})
-    except:
-        return HttpResponseNotFound()
+        return render_to_response("group_users.html",{"groups":request.user.group_set.all(),"group":g,"rights":rights})
+    #except:
+    #    return HttpResponseNotFound()
 
 @login_required
 def create_group(request):
@@ -131,15 +147,23 @@ def create_group(request):
     return list_group(request,g.id)
 
 @login_required
-def list_topic(request,id):
+def list_group_topic(request,group_id,topic_id):
     try:
-        topic=Topic.objects.get(id=id)
+        topic=GroupTopic.objects.get(id=topic_id)
         rights=""
         try:
             rights=Membership.objects.get(group=topic.group,user=request.user).rights
         except:
             rights="N"
-        return render_to_response("topic_listing.html",{'topic':topic,'rights':rights})
+        return render_to_response("group_topic_listing.html",{'topic':topic,'rights':rights})
+    except:
+        return HttpResponseNotFound()
+
+@login_required
+def list_topic(request,id):
+    try:
+        topic=Topic.objects.get(id=id)
+        return render_to_response("topic_listing.html",{'topic':topic})
     except:
         return HttpResponseNotFound()
 
@@ -201,8 +225,8 @@ def list_group_user(request,group_id,user_id):
     try:
         user=auth.User.objects.get(id=user_id)
         group=Group.objects.get(id=group_id)
-        comments_count=Comment.objects.filter(topic__group=group,author=user).count()
-        topics_count=Topic.objects.filter(group=group,starter=user).count()
+        comments_count=Comment.objects.filter(author=user).count()
+        topics_count=GroupTopic.objects.filter(group=group,starter=user).count()
         folders_count=group.folders.filter(userfolder__user=user).count()
         rights=""
         try:
@@ -214,7 +238,7 @@ def list_group_user(request,group_id,user_id):
             hisrights=Membership.objects.get(group=group,user=user).rights
         except:
             hisrights="N"
-        return render_to_response("group_user.html",{"user":user,"group":group,"comments":comments_count,"topics":topics_count,"folders":folders_count,"rights":rights,"hisrights":hisrights})
+        return render_to_response("group_user.html",{"groups":request.user.group_set.all(),"user":user,"group":group,"comments":comments_count,"topics":topics_count,"folders":folders_count,"rights":rights,"hisrights":hisrights})
     except:
         return HttpResponseNotFound()
 
@@ -243,13 +267,12 @@ def grant_group_user_rights(request,group_id,user_id,new_rights):
         return HttpResponseNotFound()
 
 @login_required
-def start_topic(request):
+def start_group_topic(request):
     if request.method=='POST':
         title=request.POST["title"]
         group_id=request.POST["group_id"]
-        new=Topic(title=title,starter=request.user,started=datetime.now(),group=Group.objects.get(id=group_id),last_post=datetime.now())
-        new.save()
-        return list_topic(request,new.id)
+        new=GroupTopic.objects.create(title=title,starter=request.user,started=datetime.now(),group=Group.objects.get(id=group_id),last_post=datetime.now())
+        return list_group_topic(request,new.topic_ptr.id)
     else:
         return HttpResponseServerError("Bad request.")
 
@@ -260,7 +283,7 @@ def list_group_folders(request,groupid):
         rights=Membership.objects.get(group=groupid,user=request.user).rights
     except:
         rights="N"
-    return render_to_response('group_folders.html', {
+    return render_to_response('group_folders.html', {"groups":request.user.group_set.all(),
     'group':Group.objects.get(id=groupid),'rights':rights,'user':request.user
     })
 
@@ -271,7 +294,7 @@ def list_group_users(request,groupid):
         rights=Membership.objects.get(group=groupid,user=request.user).rights
     except:
         rights="N"
-    return render_to_response('group_users.html', {
+    return render_to_response('group_users.html', {"groups":request.user.group_set.all(),
     'group':Group.objects.get(id=groupid),'rights':rights,'user':request.user
     })
 
@@ -282,7 +305,7 @@ def list_group_topics(request,groupid):
         rights=Membership.objects.get(group=groupid,user=request.user).rights
     except:
         rights="N"
-    return render_to_response('group_topics.html', {
+    return render_to_response('group_topics.html', {"groups":request.user.group_set.all(),
     'group':Group.objects.get(id=groupid),'rights':rights,'user':request.user
     })
 
@@ -376,6 +399,7 @@ def create_folder(request):
 
 def full_folder(p):
     for q in FeedFilterPair.objects.filter(folder=p):
+        q.feed.Check()# THIS FUCKING MADNESS MUST BE DELETED IN PRODUCTION!!!!!!!!!!!!!!!
         for e in Entry.objects.filter(feed=q.feed,downloaded__gt=q.last_cheked).exclude(folderentry__folder=p):
             flag1=True
             flag2=False
@@ -410,7 +434,7 @@ def list_folder_entries(request,folder_id):
       if request.method=="POST":
         return render_to_response("folder_listing.html",{'userfolder':userfolder,'folder':p,'entries':e,'more':(e.count()<p.folderentry_set.count())*20})
       else:
-        P=Folder.objects.filter(Q(userfolder__user=request.user)|Q(group__members=request.user))
+        P=Folder.objects.filter(Q(userfolder__user=request.user))#|Q(group__members=request.user))
         return render_to_response("folder_direct.html",{'userfolder':userfolder,'folder':p,'folders':P,'entries':e,'more':(e.count()<p.folderentry_set.count())*20})
     except:
       return HttpResponseNotFound("")
@@ -423,7 +447,7 @@ def more_folder_entries(request,folder_id,next):
 
 @login_required
 def list_folders(request):
-    P=Folder.objects.filter(Q(userfolder__user=request.user)|Q(group__members=request.user))
+    P=Folder.objects.filter(Q(userfolder__user=request.user))#|Q(group__members=request.user))
     for p in P:
         full_folder(p)
     F=None
@@ -433,7 +457,7 @@ def list_folders(request):
 
 @login_required
 def list_favorites(request):
-    P=Folder.objects.filter(Q(userfolder__user=request.user)|Q(group__members=request.user))
+    P=Folder.objects.filter(Q(userfolder__user=request.user))#|Q(group__members=request.user))
     f=Favor.objects.filter(user=request.user)
     return render_to_response("favorites.html",{"favors":f,"folders":P})
 
@@ -456,36 +480,3 @@ def favorite_entry(request):
 def logout(request):
     auth_logout(request)
     return HttpResponseRedirect("/")
-
-"""
-def check_feed(q):
-    if True:#q.last_cheked<time.time()-5 or q.last_cheked==-1:
-	R=feedparser.parse(q.url,modified=q.last_cheked.utctimetuple())
-	if q.title=="":
-	    try:
-		q.title=R.feed.title
-	    except:
-		q.title=q.url
-	    try:
-		q.subtitle=R.feed.subtitle
-	    except:
-		q.subtitle=""
-	    try:
-		q.link=R.feed.link
-	    except:
-		q.link=q.url
-	    q.save()
-	E=R.entries
-	q.last_cheked=datetime.now()
-	q.save()
-	count=0
-	for e in E:
-	    if not (q.entry_set.filter(native_id=e.id)):
-		en=Entry(native_id=e.id,title=e.title,summary=e.description,url=e.link,feed=q,downloaded=datetime.utcfromtimestamp(time.mktime(e.updated_parsed)))
-		en.save()
-		print en.url
-		print en.title
-		print
-		count+=1
-	print len(E)-count,"of them are already in db"
-"""

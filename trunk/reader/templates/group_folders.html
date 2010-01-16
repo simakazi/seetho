@@ -1,55 +1,77 @@
+{% extends "index.html" %}
 {% load ifpermit %}
 
+{% block mainmenu %}
+<div class="button" onclick="javascript:document.location='/'">News</div>
+<div class="button" onclick="javascript:document.location='/folders'">Folders</div>
+<div class="button" onclick="javascript:document.location='/groups'">Groups</div>
+<div class="button" onclick="javascript:document.location='/search'">Search</div>
+<div class="button" onclick="javascript:document.location='/profile'">Profile</div>
+<div class="button" onclick="javascript:document.location='/logout'">Logout</div>
+{% endblock %}
+
+{% block rightpart %}
+<div class="folderheader">Groups</div>
+{% if groups %}
+<div class="rightmenu" onclick="javascript:document.location='/groups/';">All</div>
+{% for p in groups %}
+<div id="opengroup{{p.id}}" class="rightmenu" onclick="javascript:document.location='/group/{{p.id}}';">{{p.title}}</div>
+{% endfor %}
+{% endif %}
+<div id="creategroup" class="rightmenu" onclick="javascript:create_new_group();">Create new group</div>
+{% endblock %}
+
+
+{% block leftpart %}
 <div class="groupbody" id="groupbody{{group.id}}">
 
 <div class="folderheader" id="groupheader{{group.id}}">
-<div class="folderheadertext">{{group.title}}. 
+<div class="folderheadertext">{{group.title}}
 {% ifnotequal rights "N" %}
 you're {{ rights|full_right }} of this group
 {% endifnotequal %}
 </div>
 
-{% ifpermit rights A %}
-<div class="smallbutton" onclick="javascript:addfolder({{group.id}});">new folder</div>
-{% endifpermit %}
-<div class="smallbutton" onclick="javascript:$('.leftpart').load('/group/{{group.id}}/folders');">folders</div>
-<div class="smallbutton" onclick="javascript:$('.leftpart').load('/group/{{group.id}}/users');">users</div>
-<div class="smallbutton" onclick="javascript:$('.leftpart').load('/group/{{group.id}}/topics');">topics</div>
+<div class="smallbutton" onclick="javascript:document.location='/group/{{group.id}}/folders';">folders</div>
+<div class="smallbutton" onclick="javascript:document.location='/group/{{group.id}}/users';">users</div>
+<div class="smallbutton" onclick="javascript:document.location='/group/{{group.id}}/topics';">topics</div>
+
 {% ifequal rights "N" %}
 <div class="smallbutton" onclick="javascript:subscribe_group({{group.id}});">subscribe</div>
 {% endifequal %}
 {% ifequal rights "R" %}
 <div class="smallbutton" onclick="javascript:unsubscribe_group({{group.id}});">unsubscribe</div>
 {% endifequal %}
+
 {% ifpermit rights C %}
 <div class="smallbutton" onclick="javascript:purgegroup({{group.id}});">purge</div>
 {% endifpermit %}
 </div>
-
-
 <div class="groupfolders" id="groupfolders{{group.id}}">
-</div>
 
 </div>
+</div>
+{% endblock %}
 
+{% block scripts %}
 <script>
 {% for p in group.folders.all %}
 $.ajax({
-      url: "/folder/"+{{p.id}},
+      url: "/group/"+{{group.id}}+"/folder/"+{{p.id}},
       global: false,
-      type: "POST",
+      type: "GET",
       data: ({}),
       success: function(msg){
-	if (msg!="None"){
-	    $('#groupfolders'+{{group.id}}).append(msg);
-	    //$('#folderbody'+{{p.id}}).css("width","95%").css("margin-left","5px").css("margin-right","5px");
-	}
-	else{
-	}
+            if (msg!="None"){
+                $('#groupfolders'+{{group.id}}).append(msg);
+            }
+            else{
+        }
       }
    }
-)
+);
 {% empty %}
 $('#groupfolders'+{{group.id}}).html("No folders")
 {% endfor %}
 </script>
+{% endblock %}

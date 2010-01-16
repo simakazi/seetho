@@ -33,7 +33,7 @@ __metaclass__ = type
 from django.conf import settings
 from django.contrib.auth.models import User, Group
 from openid.consumer.consumer import SUCCESS
-from openid.extensions import sreg
+from openid.extensions import sreg,ax
 
 from django_openid_auth import teams
 from django_openid_auth.models import UserOpenID
@@ -84,7 +84,10 @@ class OpenIDBackend:
                 openid_response)
             if sreg_response:
                 self.update_user_details_from_sreg(user, sreg_response)
-
+        ax_res=ax.FetchResponse.fromSuccessResponse(openid_response)
+        print str(ax_res)
+        #a=ax_res.getExtensionArgs()
+        #print str(a)
         teams_response = teams.TeamsResponse.fromSuccessResponse(
             openid_response)
         if teams_response:

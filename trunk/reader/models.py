@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from django.contrib.auth import models as auth
+from datetime import datetime
+import time
+from reader.feedget import feedparser
 
 class Tag(models.Model):
     title=models.CharField(max_length=50)
@@ -17,11 +20,33 @@ class Feed(models.Model):
     link=models.URLField(max_length=200)
 
     def __unicode__(self):
-	return u"%s (%s)" % (self.url,self.last_cheked)
-    
+        return u"%s (%s)" % (self.url,self.last_cheked)
+     
+    def Check(self):
+        if self.last_cheked<datetime.now() or self.last_cheked==-1:
+            print self.url
+            R=feedparser.parse(self.url,modified=self.last_cheked.utctimetuple())
+            if not self.title:
+                try:
+                    self.title=R.feed.title
+                except:
+                    self.title=self.url
+                try:
+                    self.subtitle=R.feed.subtitle
+                except:
+                    self.subtitle=""
+                try:
+                    self.link=R.feed.link
+                except:
+                    self.link=self.url
+            E=R.entries
+            self.last_cheked=datetime.now()
+            self.save()
+            for e in E:
+                Entry.fromFeedParser(self,e)
     class Meta:
-	ordering=["last_cheked"]
-	db_table="feeds"
+        ordering=["last_cheked"]
+        db_table="feeds"
 
 class Entry(models.Model):
     native_id=models.CharField(max_length=300)
@@ -35,6 +60,26 @@ class Entry(models.Model):
     def __unicode__(self):
 	return self.title
     
+    @staticmethod
+    def fromFeedParser(feed,e):
+        eid=""
+        if e.has_key("id"):
+            eid=e.id
+        else:
+            eid=e.link
+        if not (feed.entry_set.filter(native_id=eid)):
+            title=""
+            if e.has_key("title"):
+                title=e.title
+            else:
+                title=u"Без заголовка"
+            dt=datetime.now()
+            en=Entry(native_id=eid,title=title,summary=e.description,url=e.link,feed=feed,downloaded=dt,created=datetime.utcfromtimestamp(time.mktime(e.updated_parsed)))
+            en.save()
+            feed.last_cheked=dt
+            feed.save()
+            return True
+        return False
     class Meta:
 	ordering=["-created"]
 	db_table="entries"
@@ -100,10 +145,8 @@ class Membership(models.Model):
     ))
 
 class Topic(models.Model):
-    group=models.ForeignKey(Group)
     title=models.CharField(max_length=100)
     started=models.DateTimeField()
-    starter=models.ForeignKey(auth.User)
     last_post=models.DateTimeField()
 
 class Comment(models.Model):
@@ -112,6 +155,13 @@ class Comment(models.Model):
     author=models.ForeignKey(auth.User)
     created=models.DateTimeField()
     carma=models.IntegerField()
+
+class GroupTopic(Topic):
+    starter=models.ForeignKey(auth.User)
+    group=models.ForeignKey(Group)
+
+class EntryTopic(Topic):
+    entry=models.ForeignKey(Entry)
 
 class UserFolder(models.Model):
     folder=models.ForeignKey(Folder)
