@@ -12,20 +12,22 @@
 {% block rightpart %}
 <div class="folderheader">Folders</div>
 {% if folders %}
-<div class="rightmenu" onclick="javascript:document.location='/folders/';">All</div>
-<div class="rightmenu" onclick="javascript:document.location='/favorites/';">Favorites</div>
+<div class="rightmenu" onclick="javascript:document.location='/folders/{{owner.id}}';">All</div>
+<div class="rightmenu" onclick="javascript:document.location='/favorites/{{owner.id}}';">Favorites</div>
 {% for p in folders %}
 <div id="openfolder{{p.id}}" class="rightmenu" onclick="javascript:document.location='/folder/{{p.id}}';">{{p.title}}</div>
 {% endfor %}
 {% endif %}
+{% ifequal user owner %}
 <div id="createfolder" class="rightmenu" onclick="javascript:create_new_folder();">Create new folder</div>
+{% endifequal %}
 {% endblock %}
 
 {% block leftpart %}
 <div class="folderbody" id="folderbody-1">
 
 <div class="folderheader" id="folderheader-1">
-<div class="folderheadertext"><a href="/favorites/">Favorites</a> - {{favors.count}} entries</div>
+<div class="folderheadertext"><a href="/favorites/{{owner.id}}">Favorites</a> - {{favors.count}} entries</div>
 <!--div class="smallbutton" id="togglefolder-1" onclick="javascript:togglefolder(-1);">hide</div>
 <div class="smallbutton" onclick="javascript:updatefolder(-1);">update</div>
 <div class="smallbutton" onclick="javascript:cleanfolder(-1);">clean</div-->
@@ -35,8 +37,8 @@
 {% with f.entry as entry %}
 <div class="entry" id="entry-1_{{entry.id}}">
 <div style="display:table-cell;width:100%;padding-bottom:3px;">
-<h3><a href="javascript:delete_entry(-1,{{entry.id}});"><img src="/img/delete.png" style="padding-right:5px;"/></a><a href="/entry/{{ entry.id }}">{{ entry.title }}</a>
-<a href="javascript:tweetentry('{{entry.url}} {{entry.title}}',{{entry.id}})" name="tweet{{entry.id}}" ><img src="/img/twitter.ico" alt="Tweet this!" title="Tweet this!"></img></a>
+<h3>{% ifequal user owner %}<a href="javascript:delete_entry(-1,{{entry.id}});"><img src="/img/delete.png" style="padding-right:5px;"/></a>{% endifequal %}<a href="/entry/{{ entry.id }}">{{ entry.title }}</a>
+<a href="javascript:tweetentry('{{entry.url}}','{{entry.title}}',{{entry.id}})" name="tweet{{entry.id}}" ><img src="/img/twitter.ico" alt="Tweet this!" title="Tweet this!"></img></a>
 <a href="javascript:facebook_share('{{entry.url|escapejs}}','{{entry.title|escapejs}}')"><img src="/img/facebook.ico" alt="Share on Facebook" title="Share on Facebook"></img></a>
 <a href="javascript:bookmark_on_delicious('{{entry.url}}','{{entry.title}}');"><img src="http://static.delicious.com/img/delicious.small.gif" height="10" width="10" alt="Bookmark this on Delicious" title="Bookmark this on Delicious"></img></a>
 </h3></div>

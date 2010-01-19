@@ -2,7 +2,7 @@
 {% block mainmenu %}
 {% if user.is_authenticated %}
 <div class="button_disabled">News</div>
-<div class="button" onclick="javascript:document.location='/folders'">Folders</div>
+<div class="button" onclick="javascript:document.location='/folders/{{user.id}}'">Folders</div>
 <div class="button" onclick="javascript:document.location='/groups'">Groups</div>
 <div class="button" onclick="javascript:document.location='/search'">Search</div>
 <div class="button" onclick="javascript:document.location='/profile'">Profile</div>

@@ -399,7 +399,7 @@ def create_folder(request):
 
 def full_folder(p):
     for q in FeedFilterPair.objects.filter(folder=p):
-        q.feed.Check()# THIS FUCKING MADNESS MUST BE DELETED IN PRODUCTION!!!!!!!!!!!!!!!
+        #q.feed.Check()# THIS FUCKING MADNESS MUST BE DELETED IN PRODUCTION!!!!!!!!!!!!!!!
         for e in Entry.objects.filter(feed=q.feed,downloaded__gt=q.last_cheked).exclude(folderentry__folder=p):
             flag1=True
             flag2=False
@@ -424,8 +424,10 @@ def full_folder(p):
 def list_folder_entries(request,folder_id):
     try:
       p=Folder.objects.get(id=folder_id)
+      print p
       full_folder(p)
       e=p.folderentry_set.all()[0:20]
+      print e
       userfolder=None
       try:
         userfolder=UserFolder.objects.get(user=request.user,folder=p)
@@ -445,21 +447,47 @@ def more_folder_entries(request,folder_id,next):
     e=p.folderentry_set.all()[next:next+20]
     return render_to_response("one_entry.html",{'folder':p,'entries':e,'more':(next+e.count()<p.folderentry_set.count())*(next+20)})
 
-@login_required
-def list_folders(request):
-    P=Folder.objects.filter(Q(userfolder__user=request.user))#|Q(group__members=request.user))
-    for p in P:
-        full_folder(p)
-    F=None
-    return render_to_response('folders.html', {
-    'feedform':FeedForm(),'folders':P,'user':request.user
-    })
+def list_folders(request,user_id):
+    if user_id:
+        try:
+            user=auth.User.objects.get(id=user_id)
+            P=Folder.objects.filter(Q(userfolder__user=user))#|Q(group__members=request.user))
+            return render_to_response('folders.html', {
+            'feedform':FeedForm(),'folders':P,'user':request.user,'owner':user
+            })
+        except:
+            return HttpResponseNotFound("")
+    else:
+        return list_user_folders(request)
 
 @login_required
-def list_favorites(request):
+def list_user_folders(request):
+    P=Folder.objects.filter(Q(userfolder__user=request.user))#|Q(group__members=request.user))
+    print P
+    #for p in P:
+    #    full_folder(p)
+    #F=None
+    return render_to_response('folders.html', {
+    'feedform':FeedForm(),'folders':P,'user':request.user,'owner':request.user
+    })
+
+def list_favorites(request,user_id):
+    if user_id:
+        try:
+            user=auth.User.objects.get(id=user_id)
+            P=Folder.objects.filter(Q(userfolder__user=user))#|Q(group__members=request.user))
+            f=Favor.objects.filter(user=user)
+            return render_to_response("favorites.html",{"favors":f,"folders":P,'owner':user,'user':request.user})
+        except:
+            return HttpResponseNotFound("")
+    else:
+        return list_user_favorites(request)
+
+@login_required
+def list_user_favorites(request):
     P=Folder.objects.filter(Q(userfolder__user=request.user))#|Q(group__members=request.user))
     f=Favor.objects.filter(user=request.user)
-    return render_to_response("favorites.html",{"favors":f,"folders":P})
+    return render_to_response("favorites.html",{"favors":f,"folders":P,'owner':request.user,'user':request.user})
 
 @login_required
 def favorite_entry(request):
