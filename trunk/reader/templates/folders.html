@@ -2,7 +2,11 @@
 
 {% block mainmenu %}
 <div class="button" onclick="javascript:document.location='/'">News</div>
+{% ifequal user owner %}
 <div class="button_disabled">Folders</div>
+{% else %}
+<div class="button" onclick="javascript:document.location='/folders/{{user.id}}'">Folders</div>
+{% endifequal %}
 <div class="button" onclick="javascript:document.location='/groups'">Groups</div>
 <div class="button" onclick="javascript:document.location='/search'">Search</div>
 <div class="button" onclick="javascript:document.location='/profile'">Profile</div>
@@ -10,15 +14,17 @@
 {% endblock %}
 
 {% block rightpart %}
-<div class="folderheader">Folders</div>
+<div class="folderheader">{% ifnotequal user owner %}{{owner}}'s {% endifnotequal %}Folders</div>
 {% if folders %}
-<div class="rightmenu" onclick="javascript:document.location='/folders/';">All</div>
-<div class="rightmenu" onclick="javascript:document.location='/favorites/';">Favorites</div>
+<div class="rightmenu" onclick="javascript:document.location='/folders/{{owner.id}}';">All</div>
+<div class="rightmenu" onclick="javascript:document.location='/favorites/{{owner.id}}';">Favorites</div>
 {% for p in folders %}
 <div id="openfolder{{p.id}}" class="rightmenu" onclick="javascript:document.location='/folder/{{p.id}}';">{{p.title}}</div>
 {% endfor %}
 {% endif %}
+{% ifequal user owner %}
 <div id="createfolder" class="rightmenu" onclick="javascript:create_new_folder();">Create new folder</div>
+{% endifequal %}
 {% endblock %}
 
 
@@ -45,9 +51,15 @@ $.ajax({
 
 {% block leftpart %}
 {% if not folders %}
+{% ifequal owner user %}
 <h1>
 You have not add any feeds yet?!<br/>
 Just follow <a href="/add_feed">this link</a> and add one!
 </h1>
+{% else %}
+<h1>
+User {{owner}} does not have folders yet.
+</h1>
+{% endifequal %}
 {% endif %}
 {% endblock %}

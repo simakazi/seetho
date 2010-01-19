@@ -4,6 +4,7 @@ from django.contrib.auth import models as auth
 from datetime import datetime
 import time
 from reader.feedget import feedparser
+from django.db import transaction
 
 class Tag(models.Model):
     title=models.CharField(max_length=50)
@@ -61,6 +62,7 @@ class Entry(models.Model):
 	return self.title
     
     @staticmethod
+    @transaction.commit_manually
     def fromFeedParser(feed,e):
         eid=""
         if e.has_key("id"):
@@ -74,10 +76,17 @@ class Entry(models.Model):
             else:
                 title=u"Без заголовка"
             dt=datetime.now()
-            en=Entry(native_id=eid,title=title,summary=e.description,url=e.link,feed=feed,downloaded=dt,created=datetime.utcfromtimestamp(time.mktime(e.updated_parsed)))
-            en.save()
+            transaction.commit()
+            try:
+                en=Entry(native_id=eid,title=title,summary=e.description,url=e.link,feed=feed,downloaded=dt,created=datetime.utcfromtimestamp(time.mktime(e.updated_parsed)))
+                en.save()
+            except:
+                transaction.rollback()
+            else:
+                transaction.commit()
             feed.last_cheked=dt
             feed.save()
+            transaction.commit()
             return True
         return False
     class Meta:

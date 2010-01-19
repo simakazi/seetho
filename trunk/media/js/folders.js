@@ -1,29 +1,19 @@
-function tweetentry(text,id){
-window.open('http://twitter.com/home?status='+encodeURIComponent(text),'twitter','toolbar=0,status=0');
-/*
-$("#upyachka").remove();
-$("#main").append("<iframe width='0' height='0' frameborder='0' style='display:none' id='upyachka' name='upyachka'></iframe>");
-$("#upyachka").append("<form id='callme' target='upyachka' action='http://twitter.com/statuses/update.xml' method='post'><input name='status'' value='"+text+"'><input type='submit'></input></form>");
-$("#callme").trigger("submit");
-$("a[name='tweet"+id+"']").replaceWith("<i>tweeted</i>");
-*/
+function tweetentry(url,text,id){
 
-/*$.post("http://twitter.com/statuses/update.json", { status: text },
-  function(data){
-    alert("Data Loaded: " + data);
-  });
-/*
-$.ajax({
-        url:"http://twitter.com/statuses/update.json",
-        global:false,
-        type:"POST",
-        data:({"status":text}),
-        succes: function(msg){
-         alert(msg);
-        }
-  
-    });
-*/
+  window.tweet_callback = function(response)
+  {
+    if(response.error_message)
+    {
+     window.open('http://twitter.com/home?status='+encodeURIComponent(url+" "+text),'twitter','toolbar=0,status=0');
+    }
+    else
+    {
+      window.open('http://twitter.com/home?status='+encodeURIComponent(response.short_url+" "+text),'twitter','toolbar=0,status=0');
+    }
+  };
+  var s = document.createElement("script");
+  s.src = "http://ggl-shortener.appspot.com/?url=" + encodeURIComponent(url) + "&jsonp=tweet_callback";
+  document.body.appendChild(s);
 }
 
 function facebook_share(u,t){
