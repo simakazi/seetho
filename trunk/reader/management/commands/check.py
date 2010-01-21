@@ -7,10 +7,11 @@ import time
 
 class CheckThread(threading.Thread):
     def run(self):
-        print self.getName(),self.id_list
-        for x in self.id_list:
-            Feed.objects.get(id=x).Check()
-        time.sleep(60)
+        while 1:
+            print self.getName(),self.id_list
+            for x in self.id_list:
+                Feed.objects.get(id=x).Check()
+            time.sleep(60)
 
 class Command(NoArgsCommand):
     help = 'Checks updates on all feeds in db'
@@ -43,10 +44,11 @@ class Command(NoArgsCommand):
             f=Feed.objects.filter(id__gt=maxid)
             if f.count():
                 for q in f:
+                    maxid=max(maxid,q.id)
                     if len(threads[-1].id_list)>=self.feeds_in_thread:
                         threads.append(CheckThread())
                         threads[-1].id_list=[q.id]
                         threads[-1].start()
                     else:
                         threads[-1].id_list.append(q.id)
-            time.sleep(5)
+            time.sleep(1)

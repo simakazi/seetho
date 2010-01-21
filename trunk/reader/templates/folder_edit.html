@@ -1,0 +1,54 @@
+{% extends "index.html" %}
+
+{% block mainmenu %}
+<div class="button" onclick="javascript:document.location='/'">News</div>
+<div class="button" onclick="javascript:document.location='/folders'">Folders</div>
+<div class="button" onclick="javascript:document.location='/groups'">Groups</div>
+<div class="button" onclick="javascript:document.location='/search'">Search</div>
+<div class="button" onclick="javascript:document.location='/profile'">Profile</div>
+<div class="button" onclick="javascript:document.location='/logout'">Logout</div>
+{% endblock %}
+
+{% block rightpart %}
+<div class="folderheader">Folders</div>
+{% if folders %}
+<div class="rightmenu" onclick="javascript:document.location='/folders/';">All</div>
+<div class="rightmenu" onclick="javascript:document.location='/favorites/';">Favorites</div>
+{% for p in folders %}
+<div id="openfolder{{p.id}}" class="rightmenu" onclick="javascript:document.location='/folder/{{p.id}}';">{{p.title}}</div>
+{% endfor %}
+{% endif %}
+<div id="createfolder" class="rightmenu" onclick="javascript:create_new_folder();">Create new folder</div>
+{% endblock %}
+
+{% block leftpart %}
+
+<div class="folderbody" id="folderbody{{folder.id}}">
+
+<div class="folderheader" id="folderheader{{folder.id}}">
+<div class="folderheadertext"><a href="/folder/{{folder.id}}">{{folder.title}}</a></div>
+</div>
+
+<table width="100%">
+<tr>
+<td>URL</td>
+<td>Must</td>
+<td>May</td>
+<td>Not</td>
+<td></td>
+<td></td>
+</tr>
+{% for pair in pairs %}
+<tr class="{% cycle 'row0menu' 'row1menu' %}">
+<td><input id="feed{{pair.id}}" value="{{pair.url}}" onchange="javascript:$('#save{{pair.id}}').attr('disabled','');"></input></td>
+<td><input id="must{{pair.id}}" value="{{pair.must}}" onchange="javascript:$('#save{{pair.id}}').attr('disabled','');"></input></td>
+<td><input id="may{{pair.id}}" value="{{pair.may}}" onchange="javascript:$('#save{{pair.id}}').attr('disabled','');"></input></td>
+<td><input id="not{{pair.id}}" value="{{pair.not}}" onchange="javascript:$('#save{{pair.id}}').attr('disabled','');"></input></td>
+<td><input type="button" value="Save" disabled="disabled" onclick="save_pair({{pair.id}});" name="save{{pair.id}}" id="save{{pair.id}}"></input></td>
+<td><input type="button" value="Remove" onclick="remove_pair({{pair.id}});" name="remove{{pair.id}}" id="remove{{pair.id}}"></input></td>
+</tr>
+{% endfor %}
+</table>
+</div>
+
+{% endblock %}

@@ -25,6 +25,74 @@ window.open('http://delicious.com/save?v=5&noui&jump=close&url='+encodeURICompon
 }
 
 
+function save_pair(id){
+refilter=""
+if (confirm("Do you want to refilter all it's news?"))
+    refilter="true";
+$.ajax({
+      url: "/pair/"+id+"/save/",
+      global: false,
+      type: "POST",
+      data: ({
+            url:$('#feed'+id).attr("value"),
+            must:$('#must'+id).attr("value"),
+            may:$('#may'+id).attr("value"),
+            not:$('#not'+id).attr("value"),
+            refilter:refilter,
+        }),
+      success: function(msg){	
+            $('#save'+id).attr("disabled","disabled");
+        },
+    error: function(q,w){
+	$("<div>"+q.responseText+"</div>").dialog({
+	    modal:true,
+	    overlay: {
+				backgroundColor: '#000',
+				opacity: 0.5
+			},
+	    "dialogClass":"errordialog",   
+	    
+	    minHeight:20,
+	   buttons: {"Close": function() { $(this).dialog("close"); }}
+	});
+    }
+}
+)
+}
+
+function remove_pair(id){
+if (confirm("Are you sure?")){
+//refilter="";
+//if (confirm("Do you want to delete all it's news to?"))
+//    refilter="true";
+$.ajax({
+      url: "/pair/"+id+"/save/",
+      global: false,
+      type: "DELETE",
+      data: ({
+            //refilter:refilter
+            }),
+      success: function(msg){	
+           $("#save"+id).parent().parent().remove();
+        },
+    error: function(q,w){
+	$("<div>"+q.responseText+"</div>").dialog({
+	    modal:true,
+	    overlay: {
+				backgroundColor: '#000',
+				opacity: 0.5
+			},
+	    "dialogClass":"errordialog",   
+	    
+	    minHeight:20,
+	   buttons: {"Close": function() { $(this).dialog("close"); }}
+	});
+    }
+}
+)
+}
+}
+
 function openfolder(id){
 closeaccordion();
 $('.leftpart').html("");
