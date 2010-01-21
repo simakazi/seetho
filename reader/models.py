@@ -116,11 +116,10 @@ class FolderEntry(models.Model):
 	ordering=["entry"]
 
 class FeedFilterPair(models.Model):
-    title=models.CharField(max_length=100)
     feed=models.ForeignKey(Feed)
     user=models.ForeignKey(auth.User)
     last_cheked=models.DateTimeField()
-    folder=models.ForeignKey(Folder)    
+    folder=models.ForeignKey(Folder)
 
     class Meta:
 	db_table="pairs"

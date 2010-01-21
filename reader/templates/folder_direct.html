@@ -29,6 +29,7 @@
 <div class="folderheadertext"><a href="/folder/{{folder.id}}">{{folder.title}}</a> - {{folder.folderentry_set.count}} entries</div>
 {% if userfolder %}
 <div class="smallbutton" onclick="javascript:addfeed({{folder.id}});">add feed</div>
+<div class="smallbutton" onclick="javascript:document.location='/folder/{{folder.id}}/edit';">edit</div>
 {% endif %}
 <div class="smallbutton" id="togglefolder{{folder.id}}" onclick="javascript:togglefolder({{folder.id}});">hide</div>
 <div class="smallbutton" onclick="javascript:updatefolder({{folder.id}});">update</div>

@@ -36,7 +36,7 @@ def add_feed(request):
             else:
                 folder=Folder(title=folder_title)
                 folder.save()
-            pair=FeedFilterPair(folder=folder,feed=feed,user=request.user,last_cheked="2009-01-01 00:00",title="")
+            pair=FeedFilterPair(folder=folder,feed=feed,user=request.user,last_cheked="2009-01-01 00:00")
             pair.save()
             for q in [(1,filter_must),(2,filter_may),(3,filter_not)]:
                 for w in map(lambda x:x.strip(),q[1].split(",")):
@@ -488,6 +488,86 @@ def list_user_favorites(request):
     P=Folder.objects.filter(Q(userfolder__user=request.user))#|Q(group__members=request.user))
     f=Favor.objects.filter(user=request.user)
     return render_to_response("favorites.html",{"favors":f,"folders":P,'owner':request.user,'user':request.user})
+
+@login_required
+def pair_save(request,pair_id):
+    if request.method=="POST":
+        url=request.POST["url"]
+        filter_must=request.POST["must"]
+        filter_may=request.POST["may"]
+        filter_not=request.POST["not"]
+        refilter=request.POST["refilter"]
+        print refilter
+        pair=None
+        try:
+            pair=FeedFilterPair.objects.get(id=pair_id)
+        except:
+            return HttpResponseServerError("No such pair, sorry.")
+        print url
+        flag=False
+        lastfeed=pair.feed
+        if lastfeed.url!=url:
+            url=feedfinder.feed(url)
+            print url
+            if lastfeed.url!=url:
+                feed=Feed.objects.filter(url=url)
+                if not (feed):
+                    feed=Feed(url=url,last_cheked="2009-01-01 00:00")
+                    feed.save()
+                else:
+                    feed=feed[0]
+                pair.feed=feed
+                pair.save()
+        pair.filter_set.all().delete()
+        pair.last_cheked="2009-01-01 00:00"
+        pair.save()
+        if refilter:
+            pair.folder.folderentry_set.filter(entry__feed=lastfeed).delete()
+        for q in [(1,filter_must),(2,filter_may),(3,filter_not)]:
+                for w in map(lambda x:x.strip(),q[1].split(",")):
+                    if w!="":
+                        filter1=Filter(type=q[0],value=w,pair=pair)
+                        filter1.save()
+        return HttpResponse("Ok.")
+    elif request.method=="DELETE":
+        pair=FeedFilterPair.objects.get(id=pair_id).delete()
+        #refilter=request.DELETE["refilter"]
+        #print refilter
+        return HttpResponse("Ok.")
+    else:
+        return HttpResponseServerError("Bad request.")
+
+@login_required
+def edit_folder(request,folder_id):
+    try:
+        folder=Folder.objects.get(id=folder_id)
+        if UserFolder.objects.get(user=request.user,folder=folder).relation=="C":
+            P=Folder.objects.filter(Q(userfolder__user=request.user))#|Q(group__members=request.user))
+            pairs=[]
+            P=folder.feedfilterpair_set.all()
+            for p in P:
+                a={}
+                a["id"]=p.id
+                a["url"]=p.feed.url
+                a["must"]=[]
+                a["may"]=[]
+                a["not"]=[]
+                for f in p.filter_set.all():
+                    if f.type==1:
+                        a["must"].append(f.value)
+                    elif f.type==2:
+                        a["may"].append(f.value)
+                    else:
+                        a["not"].append(f.value)
+                a["must"]=",".join(a["must"])
+                a["may"]=",".join(a["may"])
+                a["not"]=",".join(a["not"])
+                pairs.append(a)
+            return render_to_response("folder_edit.html",{"pairs":pairs,"folders":P})
+        else:
+            return HttpResponseServerError("qwe")
+    except:
+        return HttpResponseNotFound("")
 
 @login_required
 def favorite_entry(request):
