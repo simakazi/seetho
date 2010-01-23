@@ -1,0 +1,9 @@
+Seeth is a web-application, suitable for news agregation, reading, filtering, systematization (catalog-based) and has some social functions (groups of users, discussions and something more).
+
+To run it you need:
+python>=2.5
+Django v>=1.1
+python-openid
+
+Data filler uses cron. You need to run crontab.sh to configure it.
+
