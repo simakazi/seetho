@@ -25,9 +25,11 @@ def add_feed(request):
             if not feed_cheked:
                 feed_url=feedfinder.feed(feed_url)
             feed=Feed.objects.filter(url=feed_url)
+            new_feed=False
             if not (feed):
-                feed=Feed(url=feed_url,last_cheked="2009-01-01 00:00")
+                feed=Feed(url=feed_url,last_cheked=datetime.fromtimestamp(1))
                 feed.save()
+                new_feed=True
             else:
                 feed=feed[0]
                 folder=0
@@ -36,7 +38,7 @@ def add_feed(request):
             else:
                 folder=Folder(title=folder_title)
                 folder.save()
-            pair=FeedFilterPair(folder=folder,feed=feed,user=request.user,last_cheked="2009-01-01 00:00")
+            pair=FeedFilterPair(folder=folder,feed=feed,user=request.user,last_cheked=datetime.fromtimestamp(1))
             pair.save()
             for q in [(1,filter_must),(2,filter_may),(3,filter_not)]:
                 for w in map(lambda x:x.strip(),q[1].split(",")):
@@ -46,6 +48,8 @@ def add_feed(request):
             if folder_id==-1:
                 up=UserFolder(user=request.user,folder=folder,relation='C')
                 up.save()
+            if new_feed:
+                feed.Check()
             return HttpResponseRedirect(u"/folder/"+unicode(folder.id))
         else:
             return HttpResponseServerError("You've entered incorrect URL!")
@@ -424,10 +428,8 @@ def full_folder(p):
 def list_folder_entries(request,folder_id):
     try:
       p=Folder.objects.get(id=folder_id)
-      print p
       full_folder(p)
       e=p.folderentry_set.all()[0:20]
-      print e
       userfolder=None
       try:
         userfolder=UserFolder.objects.get(user=request.user,folder=p)
@@ -463,7 +465,6 @@ def list_folders(request,user_id):
 @login_required
 def list_user_folders(request):
     P=Folder.objects.filter(Q(userfolder__user=request.user))#|Q(group__members=request.user))
-    print P
     #for p in P:
     #    full_folder(p)
     #F=None
@@ -497,18 +498,15 @@ def pair_save(request,pair_id):
         filter_may=request.POST["may"]
         filter_not=request.POST["not"]
         refilter=request.POST["refilter"]
-        print refilter
         pair=None
         try:
             pair=FeedFilterPair.objects.get(id=pair_id)
         except:
             return HttpResponseServerError("No such pair, sorry.")
-        print url
         flag=False
         lastfeed=pair.feed
         if lastfeed.url!=url:
             url=feedfinder.feed(url)
-            print url
             if lastfeed.url!=url:
                 feed=Feed.objects.filter(url=url)
                 if not (feed):
@@ -530,7 +528,9 @@ def pair_save(request,pair_id):
                         filter1.save()
         return HttpResponse("Ok.")
     elif request.method=="DELETE":
-        pair=FeedFilterPair.objects.get(id=pair_id).delete()
+        pair=FeedFilterPair.objects.get(id=pair_id)
+        pair.folder.folderentry_set.filter(entry__feed=pair.feed).delete()
+        pair.delete()
         #refilter=request.DELETE["refilter"]
         #print refilter
         return HttpResponse("Ok.")
@@ -542,7 +542,7 @@ def edit_folder(request,folder_id):
     try:
         folder=Folder.objects.get(id=folder_id)
         if UserFolder.objects.get(user=request.user,folder=folder).relation=="C":
-            P=Folder.objects.filter(Q(userfolder__user=request.user))#|Q(group__members=request.user))
+            folders=Folder.objects.filter(Q(userfolder__user=request.user))#|Q(group__members=request.user))
             pairs=[]
             P=folder.feedfilterpair_set.all()
             for p in P:
@@ -563,7 +563,7 @@ def edit_folder(request,folder_id):
                 a["may"]=",".join(a["may"])
                 a["not"]=",".join(a["not"])
                 pairs.append(a)
-            return render_to_response("folder_edit.html",{"pairs":pairs,"folders":P})
+            return render_to_response("folder_edit.html",{"pairs":pairs,"folder":folder,"folders":folders})
         else:
             return HttpResponseServerError("qwe")
     except:

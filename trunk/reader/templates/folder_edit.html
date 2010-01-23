@@ -31,16 +31,16 @@
 
 <table width="100%">
 <tr>
-<td>URL</td>
-<td>Must</td>
-<td>May</td>
-<td>Not</td>
+<td style="width:50%;">URL</td>
+<td>contain all</td>
+<td>contain some</td>
+<td>don't contain</td>
 <td></td>
 <td></td>
 </tr>
 {% for pair in pairs %}
 <tr class="{% cycle 'row0menu' 'row1menu' %}">
-<td><input id="feed{{pair.id}}" value="{{pair.url}}" onchange="javascript:$('#save{{pair.id}}').attr('disabled','');"></input></td>
+<td><input style="width:100%;" id="feed{{pair.id}}" value="{{pair.url}}" onchange="javascript:$('#save{{pair.id}}').attr('disabled','');"></input></td>
 <td><input id="must{{pair.id}}" value="{{pair.must}}" onchange="javascript:$('#save{{pair.id}}').attr('disabled','');"></input></td>
 <td><input id="may{{pair.id}}" value="{{pair.may}}" onchange="javascript:$('#save{{pair.id}}').attr('disabled','');"></input></td>
 <td><input id="not{{pair.id}}" value="{{pair.not}}" onchange="javascript:$('#save{{pair.id}}').attr('disabled','');"></input></td>

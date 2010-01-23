@@ -11,7 +11,7 @@ class CheckThread(threading.Thread):
             print self.getName(),self.id_list
             for x in self.id_list:
                 Feed.objects.get(id=x).Check()
-            time.sleep(60)
+            time.sleep(300)
 
 class Command(NoArgsCommand):
     help = 'Checks updates on all feeds in db'
@@ -39,7 +39,7 @@ class Command(NoArgsCommand):
             t.setName("Thread"+str(i))
             threads.append(t)
             threads[-1].start()
-        
+        del feeds
         while 1:
             f=Feed.objects.filter(id__gt=maxid)
             if f.count():
