@@ -16,6 +16,24 @@ $.ajax({
 )
 }
 
+function updategrouptopic(group_id,id){
+$('#topicbody'+id).html("<img src='/img/loading.gif' />");
+$.ajax({
+      url: "/group/"+group_id+"/topic/"+id,
+      global: false,
+      type: "GET",
+      data: ({}),
+      success: function(msg){
+	if (msg!="None"){
+	    $('#topicbody'+id).replaceWith(msg);
+	}
+	else{
+	}
+      }
+   }
+)
+}
+
 function toggletopic(a){
 $('#topicbody'+a+' > .entry').toggle();
 if ($('#toggletopic'+a).text()=='show')
@@ -81,6 +99,24 @@ $.ajax({
 );
 }
 
+function group_addcomment(group_id,topic_id,comment_text){
+$.ajax({
+      url: "/add_comment/",
+      global: false,
+      type: "POST",
+      data: ({topic : topic_id,text:comment_text}),
+      success: function(msg){
+	if (msg=="Error"){
+	 alert("Something gone wrong!"); 
+	}
+	else{
+	 document.location.reload();
+	}
+      }
+   }
+);
+}
+
 function newtopic(id){
 a=prompt("Please, enter new topic's title:","new topic");
 if (a!=null){
@@ -94,7 +130,7 @@ $.ajax({
 	 alert("Something gone wrong!"); 
 	}
 	else{
-	    $('#groupbody'+id).append(msg);
+	    $('#grouptopics'+id).append(msg);
 	}
       }
    }
