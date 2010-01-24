@@ -155,11 +155,13 @@ def list_group_topic(request,group_id,topic_id):
     try:
         topic=GroupTopic.objects.get(id=topic_id)
         rights=""
+        group=topic.group
+        topics=group.grouptopic_set.all()
         try:
-            rights=Membership.objects.get(group=topic.group,user=request.user).rights
+            rights=Membership.objects.get(group=group,user=request.user).rights
         except:
             rights="N"
-        return render_to_response("group_topic_listing.html",{'topic':topic,'rights':rights})
+        return render_to_response("group_topic_listing.html",{'topic':topic,'rights':rights,'group':group,'topics':topics})
     except:
         return HttpResponseNotFound()
 
@@ -192,8 +194,11 @@ def add_comment(request):
     if request.method=='POST':
         text=request.POST["text"]
         topic=request.POST["topic"]
-        new=Comment(topic=Topic.objects.get(id=topic),text=text,author=request.user,created=datetime.now(),carma=0)
+        topic=Topic.objects.get(id=topic)
+        new=Comment(topic=topic,text=text,author=request.user,created=datetime.now(),carma=0)
+        topic.last_post=new.created
         new.save()
+        topic.save()
         return HttpResponse("Ok")
     else:
         return HttpResponseServerError("Bad request.")
@@ -275,8 +280,10 @@ def start_group_topic(request):
     if request.method=='POST':
         title=request.POST["title"]
         group_id=request.POST["group_id"]
-        new=GroupTopic.objects.create(title=title,starter=request.user,started=datetime.now(),group=Group.objects.get(id=group_id),last_post=datetime.now())
-        return list_group_topic(request,new.topic_ptr.id)
+        group=Group.objects.get(id=group_id)
+        new=GroupTopic.objects.create(title=title,starter=request.user,started=datetime.now(),group=group,last_post=datetime.now())
+        new.save()
+        return HttpResponse("<div onclick=\"javascript:document.location='/group/"+str(group_id)+"/topic/"+str(new.id)+"';\" class='row"+str((group.grouptopic_set.count()+1)%2)+"menu'>"+new.title+" [0 comments]</div>")#list_group_topic(request,new.id)
     else:
         return HttpResponseServerError("Bad request.")
 

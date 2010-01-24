@@ -15,7 +15,7 @@ class CheckThread(threading.Thread):
 
 class Command(NoArgsCommand):
     help = 'Checks updates on all feeds in db'
-    feeds_in_thread=1
+    feeds_in_thread=2
     def handle_noargs(self, **options):
         while 1:
             print "Running threads"

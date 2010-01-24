@@ -156,6 +156,9 @@ class Topic(models.Model):
     title=models.CharField(max_length=100)
     started=models.DateTimeField()
     last_post=models.DateTimeField()
+    
+    class Meta:
+        ordering=["-last_post"]
 
 class Comment(models.Model):
     topic=models.ForeignKey(Topic)
@@ -167,6 +170,9 @@ class Comment(models.Model):
 class GroupTopic(Topic):
     starter=models.ForeignKey(auth.User)
     group=models.ForeignKey(Group)
+        
+    class Meta:
+        ordering=["-last_post"]
 
 class EntryTopic(Topic):
     entry=models.ForeignKey(Entry)

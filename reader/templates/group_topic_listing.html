@@ -1,4 +1,24 @@
+{% extends "index.html" %}
 {% load ifpermit %}
+
+{% block mainmenu %}
+<div class="button" onclick="javascript:document.location='/'">News</div>
+<div class="button" onclick="javascript:document.location='/folders'">Folders</div>
+<div class="button" onclick="javascript:document.location='/groups'">Groups</div>
+<div class="button" onclick="javascript:document.location='/search'">Search</div>
+<div class="button" onclick="javascript:document.location='/profile'">Profile</div>
+<div class="button" onclick="javascript:document.location='/logout'">Logout</div>
+{% endblock %}
+
+{% block rightpart %}
+<div class="folderheader">Group '{{group.title}}' topics</div>
+<div class="rightmenu" onclick="javascript:document.location='/group/{{group.id}}/topics';">All</div>
+{% for p in topics %}
+<div id="opentopic{{p.id}}" class="rightmenu" onclick="javascript:document.location='/group/{{group.id}}/topic/{{p.id}}';">{{p.title}}</div>
+{% endfor %}
+{% endblock %}
+
+{% block leftpart %}
 <div class="folderbody" id="topicbody{{topic.id}}">
 
 <div class="folderheader" id="topicheader{{topic.id}}">
@@ -27,7 +47,8 @@
 <div style="display:table-cell;width:100%;">Add your comment</div>
 <textarea id="comment_text{{topic.id}}" wrap="virtual" cols="100" rows="3" style='width: 80%'>Enter your comment...</textarea>
 <br />
-<button onclick="javascript:addcomment({{topic.id}},$('#comment_text{{topic.id}}').attr('value'))">Post</button>
+<button onclick="javascript:group_addcomment({{group.id}},{{topic.id}},$('#comment_text{{topic.id}}').attr('value'))">Post</button>
 </div>
 
 </div>
+{% endblock%}
